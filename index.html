@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টাকার গাছ - Takar Gach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="auth-section">
+        
+        <div id="register-screen" class="screen active">
+            <div class="auth-box">
+                <img src="https://i.ibb.co/vzCn3qY/money-tree-logo.png" alt="Logo" class="auth-logo">
+                <h2>নতুন একাউন্ট খুলুন</h2>
+                <form id="reg-form">
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="number" id="reg-phone" placeholder="মোবাইল নম্বর (১১ ডিজিট)" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="reg-email" placeholder="ইমেইল এড্রেস" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="reg-pass" placeholder="পাসওয়ার্ড" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="reg-confirm-pass" placeholder="কনফার্ম পাসওয়ার্ড" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-gift"></i>
+                        <input type="text" id="reg-ref" placeholder="রেফারেল কোড (অপশনাল)">
+                    </div>
+
+                    <div class="captcha-container">
+                        <div id="captcha-display">1234</div>
+                        <i class="fas fa-sync-alt" onclick="generateCaptcha()"></i>
+                        <input type="text" id="captcha-input" placeholder="কোডটি লিখুন" required>
+                    </div>
+
+                    <button type="submit" class="primary-btn">রেজিস্টার করুন</button>
+                    <p class="switch-auth">অলরেডি একাউন্ট আছে? <span onclick="showScreen('login-screen')">লগইন</span></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="login-screen" class="screen">
+            <div class="auth-box">
+                <img src="https://i.ibb.co/vzCn3qY/money-tree-logo.png" alt="Logo" class="auth-logo">
+                <h2>স্বাগতম ফিরে এসেছেন</h2>
+                <form id="login-form">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="ইমেইল" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-pass" placeholder="পাসওয়ার্ড" required>
+                    </div>
+                    <button type="submit" class="primary-btn">লগইন করুন</button>
+                    <p class="switch-auth">একাউন্ট নেই? <span onclick="showScreen('register-screen')">রেজিস্টার</span></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-section" style="display: none;">
+        
+        <header>
+            <div class="header-top">
+                <div class="user-info">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User">
+                    <div>
+                        <h4 id="user-name-display">ব্যবহারকারী</h4>
+                        <span id="user-phone-display">017XXXXXXXX</span>
+                    </div>
+                </div>
+                <div class="balance-card">
+                    <small>বর্তমান ব্যালেন্স</small>
+                    <h2 id="main-balance">৳ 0.00</h2>
+                </div>
+            </div>
+            
+            <div class="launch-timer-banner">
+                <i class="fas fa-rocket"></i> বট লঞ্চের মেয়াদ: 
+                <span id="launch-timer">00 মাস 00 দিন 00:00:00</span>
+            </div>
+        </header>
+
+        <div id="main-content">
+            
+            <div id="home-screen" class="content-screen active">
+                <div class="promo-banner">
+                    <h3>স্পেশাল অফার! 🚩</h3>
+                    <p>১০ জন রেফার করতে পারলে ২০ টাকা এক্সট্রা বোনাস।</p>
+                </div>
+
+                <div class="menu-grid">
+                    <div class="menu-item" onclick="showContent('vip-screen')">
+                        <div class="icon-box vip"><i class="fas fa-crown"></i></div>
+                        <span>ভিআইপি</span>
+                    </div>
+                    <div class="menu-item" onclick="showContent('task-screen')">
+                        <div class="icon-box task"><i class="fas fa-tasks"></i></div>
+                        <span>কাজ</span>
+                    </div>
+                    <div class="menu-item" onclick="showContent('withdraw-screen')">
+                        <div class="icon-box withdraw"><i class="fas fa-wallet"></i></div>
+                        <span>ক্যাশআউট</span>
+                    </div>
+                    <div class="menu-item" onclick="showContent('deposit-screen')">
+                        <div class="icon-box deposit"><i class="fas fa-university"></i></div>
+                        <span>ডিপোজিট</span>
+                    </div>
+                    <div class="menu-item" onclick="showContent('history-screen')">
+                        <div class="icon-box history"><i class="fas fa-receipt"></i></div>
+                        <span>হিস্টরি</span>
+                    </div>
+                    <div class="menu-item" onclick="showContent('support-screen')">
+                        <div class="icon-box support"><i class="fab fa-telegram-plane"></i></div>
+                        <span>সাপোর্ট</span>
+                    </div>
+                    <div class="menu-item" onclick="showContent('rules-screen')">
+                        <div class="icon-box rules"><i class="fas fa-scroll"></i></div>
+                        <span>নিয়মাবলী</span>
+                    </div>
+                    <div class="menu-item" onclick="openShareModal()">
+                        <div class="icon-box share"><i class="fas fa-share-alt"></i></div>
+                        <span>শেয়ার</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vip-screen" class="content-screen">
+                <div class="section-header">
+                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
+                    <h3>ভিআইপি প্যাকেজ</h3>
+                </div>
+                <div id="my-plan-status" class="plan-timer-box" style="display:none;">
+                    <span>আপনার বর্তমান প্ল্যান: <b id="current-plan-name">Free</b></span>
+                    <div class="timer-display">মেয়াদ: <span id="plan-expiry-timer">--:--:--</span></div>
+                </div>
+                <div id="vip-list-container">
+                    <div class="loading-spinner">প্যাকেজ লোড হচ্ছে...</div>
+                </div>
+            </div>
+
+            <div id="task-screen" class="content-screen">
+                <div class="section-header">
+                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
+                    <h3>আজকের কাজ</h3>
+                </div>
+                <div class="task-warning">
+                    <i class="fas fa-exclamation-circle"></i> সঠিক ভাবে কাজ না করলে পেমেন্ট পাবেন না।
+                </div>
+                <div id="task-list-container">
+                    </div>
+            </div>
+
+            <div id="deposit-screen" class="content-screen">
+                <div class="section-header">
+                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
+                    <h3>ডিপোজিট করুন</h3>
+                </div>
+                <div class="payment-methods">
+                    <div class="method active" onclick="selectMethod('bkash')"><img src="https://i.ibb.co/5L4r6x5/bkash.png" alt="Bkash">বিকাশ</div>
+                    <div class="method" onclick="selectMethod('nagad')"><img src="https://i.ibb.co/7QzDq4x/nagad.png" alt="Nagad">নগদ</div>
+                </div>
+                <div class="deposit-form">
+                    <div class="number-copy-box">
+                        <span id="admin-number">017XXXXXXXX</span>
+                        <button onclick="copyNumber()">COPY</button>
+                    </div>
+                    <p class="note-text">শুধুমাত্র "Send Money" করবেন।</p>
+                    
+                    <input type="number" id="dep-amount" placeholder="টাকার পরিমাণ">
+                    <input type="number" id="dep-sender" placeholder="যে নাম্বার থেকে পাঠিয়েছেন">
+                    <input type="text" id="dep-trx" placeholder="ট্রানজেকশন আইডি (TrxID)">
+                    
+                    <button class="primary-btn" onclick="submitDeposit()">জমা দিন</button>
+                </div>
+            </div>
+
+            <div id="history-screen" class="content-screen">
+                <div class="section-header">
+                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
+                    <h3>লেনদেন হিস্টরি</h3>
+                </div>
+                <div class="history-tabs">
+                    <button class="active" onclick="filterHistory('all')">সব</button>
+                    <button onclick="filterHistory('withdraw')">উইথড্র</button>
+                    <button onclick="filterHistory('deposit')">ডিপোজিট</button>
+                </div>
+                <div id="history-list">
+                    </div>
+            </div>
+
+            <div id="rules-screen" class="content-screen">
+                <div class="section-header">
+                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
+                    <h3>নিয়মাবলী ও পলিসি</h3>
+                </div>
+                <div class="rules-content">
+                    <h4>⚠️ সাধারণ সতর্কবার্তা</h4>
+                    <p>১. একাধিক একাউন্ট করা সম্পূর্ণ নিষিদ্ধ। ধরা পড়লে সব একাউন্ট ব্যান হবে।</p>
+                    <p>২. ভুল তথ্য দিয়ে টাকা তোলার চেষ্টা করবেন না।</p>
+                    <hr>
+                    <h4>⏰ অফিস সময়</h4>
+                    <p>সকাল ৯:০০ টা থেকে রাত ৯:৩০ পর্যন্ত আমাদের সকল কার্যক্রম চালু থাকে। এর বাইরে রিকোয়েস্ট দিলে পরদিন প্রসেস করা হবে।</p>
+                    <hr>
+                    <h4>🔒 প্রাইভেসি পলিসি</h4>
+                    <p>আপনার সকল তথ্য আমাদের কাছে সুরক্ষিত...</p>
+                    </div>
+            </div>
+
+        </div> <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showContent('home-screen')">
+                <i class="fas fa-home"></i>
+                <span>হোম</span>
+            </div>
+            <div class="nav-item" onclick="showContent('task-screen')">
+                <i class="fas fa-list-check"></i>
+                <span>কাজ</span>
+            </div>
+            <div class="nav-item" onclick="showContent('history-screen')">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>লেনদেন</span>
+            </div>
+            <div class="nav-item" onclick="showContent('rules-screen')">
+                <i class="fas fa-user"></i>
+                <span>প্রোফাইল</span>
+            </div>
+        </nav>
+    </div>
+
+    <div id="receipt-modal" class="modal">
+        <div class="modal-content receipt-card">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="receipt-icon-container">
+                </div>
+            <h2 id="receipt-status-text">Successful</h2>
+            <p id="receipt-id-display">ID: Txn_123456</p>
+            
+            <div class="receipt-details">
+                <div class="detail-row">
+                    <span>User Phone</span>
+                    <span id="r-phone">017...</span>
+                </div>
+                <div class="detail-row">
+                    <span>Type</span>
+                    <span id="r-type">Withdraw</span>
+                </div>
+                <div class="detail-row">
+                    <span>Amount</span>
+                    <b id="r-amount">৳ 500</b>
+                </div>
+                <div class="detail-row">
+                    <span>Date</span>
+                    <span id="r-date">12/12/2025</span>
+                </div>
+                <div class="detail-row">
+                    <span>TrxID</span>
+                    <span id="r-trx" class="copy-able" onclick="copyText('r-trx')">--</span>
+                </div>
+            </div>
+
+            <div id="rejection-box" class="rejection-alert" style="display:none;">
+                <strong>🔴 Rejection Reason:</strong>
+                <p id="r-reason">সঠিক নিয়মে কাজ করেননি।</p>
+            </div>
+
+            <button class="close-btn" onclick="closeModal()">CLOSE WINDOW</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="app.js"></script>
+</body>
+</html>
+:root {
+    --primary: #008751; /* Grameenphone like Green */
+    --primary-dark: #006039;
+    --accent: #ffa500; /* Gold/Orange */
+    --bg: #f2f5f8;
+    --white: #ffffff;
+    --text: #333333;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    --warning: #f1c40f;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+body { background-color: var(--bg); color: var(--text); height: 100vh; overflow-x: hidden; }
+
+/* --- Auth Styles --- */
+#auth-section { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+.screen { display: none; width: 100%; max-width: 400px; padding: 20px; }
+.screen.active { display: block; animation: fadeIn 0.5s; }
+.auth-box { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
+.auth-logo { width: 80px; margin-bottom: 10px; }
+.input-group { position: relative; margin-bottom: 15px; text-align: left; }
+.input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #777; }
+.input-group input { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; }
+.input-group input:focus { border-color: var(--primary); }
+.primary-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.primary-btn:active { transform: scale(0.98); }
+.switch-auth { margin-top: 15px; font-size: 14px; }
+.switch-auth span { color: var(--primary); font-weight: bold; cursor: pointer; }
+
+/* Captcha */
+.captcha-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #eee; padding: 5px; border-radius: 8px; }
+#captcha-display { font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; letter-spacing: 5px; background: #fff; padding: 5px 15px; border-radius: 5px; text-decoration: line-through; color: var(--primary-dark); }
+.captcha-container i { cursor: pointer; padding: 10px; }
+#captcha-input { width: 120px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+
+/* --- App Main Styles --- */
+header { background: var(--primary); padding: 20px 20px 50px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; position: relative; }
+.header-top { display: flex; justify-content: space-between; align-items: center; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.user-info img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; }
+.balance-card { text-align: right; }
+.launch-timer-banner { background: #333; color: #fff; padding: 8px; font-size: 12px; text-align: center; position: absolute; bottom: 0; left: 0; width: 100%; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
+
+#main-content { padding: 20px; padding-bottom: 80px; margin-top: -30px; }
+.content-screen { display: none; animation: slideUp 0.3s; }
+.content-screen.active { display: block; }
+
+/* Home Menu */
+.promo-banner { background: linear-gradient(to right, #ff7e5f, #feb47b); color: white; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4); }
+.menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+.menu-item { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
+.icon-box { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; margin-bottom: 5px; color: white; transition: transform 0.2s; }
+.menu-item:hover .icon-box { transform: scale(1.1); }
+.menu-item span { font-size: 12px; font-weight: 600; color: #555; }
+
+/* Icon Colors */
+.vip { background: #f1c40f; } .task { background: #3498db; } .withdraw { background: #e74c3c; } .deposit { background: #2ecc71; }
+.history { background: #9b59b6; } .support { background: #34495e; } .rules { background: #95a5a6; } .share { background: #e67e22; }
+
+/* List Styles (History/Tasks) */
+.history-item, .package-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+.status-pending { background: #fff3cd; color: #856404; }
+.status-success { background: #d4edda; color: #155724; }
+.status-rejected { background: #f8d7da; color: #721c24; }
+
+/* Receipt Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+.receipt-card { background: white; width: 90%; max-width: 350px; padding: 25px; border-radius: 20px; text-align: center; position: relative; animation: zoomIn 0.3s; }
+#receipt-icon-container { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.icon-success { background: #d4edda; color: #2ecc71; }
+.icon-rejected { background: #f8d7da; color: #e74c3c; }
+.icon-pending { background: #fff3cd; color: #f1c40f; }
+.receipt-details { margin-top: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px dashed #ccc; }
+.detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+.rejection-alert { background: #ffeaea; padding: 10px; border-radius: 8px; margin-top: 15px; text-align: left; font-size: 13px; color: #d63031; border-left: 4px solid #d63031; }
+
+/* Bottom Nav */
+.bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; }
+.nav-item { display: flex; flex-direction: column; align-items: center; color: #999; cursor: pointer; }
+.nav-item.active { color: var(--primary); }
+.nav-item i { font-size: 20px; margin-bottom: 2px; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+// --- 1. Firebase Configuration ---
+// তোর দেওয়া কনফিগ এখানে বসালাম
+const firebaseConfig = {
+    apiKey: "AIzaSyDSyIjbEj8F8ipbs2wEmaKKTt9OThpX2AM",
+    authDomain: "takar-gash.firebaseapp.com",
+    projectId: "takar-gash",
+    storageBucket: "takar-gash.firebasestorage.app",
+    messagingSenderId: "796583669978",
+    appId: "1:796583669978:web:9dbd8680e1a98dba30b5e3",
+    measurementId: "G-E6J8VSZ0PL"
+};
+
+// Firebase Init
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// --- 2. Global Variables & Utility ---
+let currentUser = null;
+let currentCaptcha = "";
+
+// Launch Timer (ডিসেম্বর ১৫, ১০:০০ থেকে শুরু)
+function startLaunchTimer() {
+    const launchDate = new Date("2023-12-15T10:00:00").getTime(); // সাল পরিবর্তন করিস প্রয়োজনে
+    
+    setInterval(() => {
+        const now = new Date().getTime();
+        const distance = now - launchDate;
+
+        if (distance < 0) {
+             document.getElementById("launch-timer").innerText = "শীঘ্রই আসছে...";
+             return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("launch-timer").innerText = `${days} দিন ${hours} ঘণ্টা ${minutes} মি ${seconds} সে`;
+    }, 1000);
+}
+
+// Office Time Checker (9:00 AM - 9:30 PM)
+function isOfficeOpen() {
+    const now = new Date();
+    const hour = now.getHours();
+    const minutes = now.getMinutes();
+    
+    const timeInMinutes = hour * 60 + minutes;
+    const start = 9 * 60; // 9:00 AM
+    const end = 21 * 60 + 30; // 9:30 PM
+    
+    return timeInMinutes >= start && timeInMinutes <= end;
+}
+
+// --- 3. Auth System ---
+function generateCaptcha() {
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let captcha = "";
+    for (let i = 0; i < 4; i++) {
+        captcha += chars[Math.floor(Math.random() * chars.length)];
+    }
+    currentCaptcha = captcha;
+    document.getElementById("captcha-display").innerText = captcha;
+}
+generateCaptcha(); // Init
+
+// Register
+document.getElementById('reg-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const phone = document.getElementById('reg-phone').value;
+    const email = document.getElementById('reg-email').value;
+    const pass = document.getElementById('reg-pass').value;
+    const confirmPass = document.getElementById('reg-confirm-pass').value;
+    const captchaInput = document.getElementById('captcha-input').value;
+
+    if (phone.length !== 11) return alert("১১ ডিজিটের মোবাইল নম্বর দিন!");
+    if (pass !== confirmPass) return alert("পাসওয়ার্ড মিলছে না!");
+    if (captchaInput.toUpperCase() !== currentCaptcha) return alert("ক্যাপচা ভুল হয়েছে!");
+
+    auth.createUserWithEmailAndPassword(email, pass)
+        .then((cred) => {
+            // Firestore এ ইউজার ডাটা সেভ
+            return db.collection('users').doc(cred.user.uid).set({
+                phone: phone,
+                email: email,
+                balance: 0,
+                vipLevel: 'Free',
+                vipExpiry: null,
+                joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        })
+        .then(() => {
+            alert("রেজিস্ট্রেশন সফল!");
+            showScreen('login-screen');
+        })
+        .catch((err) => alert(err.message));
+});
+
+// Login
+document.getElementById('login-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+
+    auth.signInWithEmailAndPassword(email, pass)
+        .then(() => {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('app-section').style.display = 'block';
+            startLaunchTimer();
+            loadUserData();
+        })
+        .catch((err) => alert("লগইন ব্যর্থ: " + err.message));
+});
+
+// Load User Data Realtime
+function loadUserData() {
+    const uid = auth.currentUser.uid;
+    db.collection('users').doc(uid).onSnapshot((doc) => {
+        if(doc.exists) {
+            const data = doc.data();
+            document.getElementById('main-balance').innerText = `৳ ${data.balance}`;
+            document.getElementById('user-phone-display').innerText = data.phone;
+            
+            // VIP Check
+            if(data.vipLevel !== 'Free' && data.vipExpiry) {
+                document.getElementById('my-plan-status').style.display = 'block';
+                document.getElementById('current-plan-name').innerText = data.vipLevel;
+                // VIP Countdown logic here...
+            }
+        }
+    });
+}
+
+// --- 4. Navigation & UI Logic ---
+function showScreen(screenId) {
+    // Hide all screens in Auth section
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(screenId);
+    if(target) target.classList.add('active');
+}
+
+function showContent(contentId) {
+    document.querySelectorAll('.content-screen').forEach(c => c.classList.remove('active'));
+    document.getElementById(contentId).classList.add('active');
+}
+
+// --- 5. History & Receipt System ---
+// এডমিন প্যানেল থেকে রিজেক্ট করলে এখানে শো করবে
+function loadHistory() {
+    const uid = auth.currentUser.uid;
+    const list = document.getElementById('history-list');
+    list.innerHTML = '<p style="text-align:center;">লোড হচ্ছে...</p>';
+
+    db.collection('transactions').where('uid', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .onSnapshot((snapshot) => {
+            list.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const statusClass = data.status === 'success' ? 'status-success' : (data.status === 'rejected' ? 'status-rejected' : 'status-pending');
+                const icon = data.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up';
+                
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="icon-box" style="background:#eee; color:#555; width:35px; height:35px;"><i class="fas ${icon}"></i></div>
+                        <div>
+                            <h5 style="text-transform:capitalize;">${data.type}</h5>
+                            <small>${new Date(data.createdAt.toDate()).toLocaleDateString()}</small>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <h4>৳ ${data.amount}</h4>
+                        <span class="status-badge ${statusClass}">${data.status}</span>
+                    </div>
+                `;
+                // Click to open Receipt
+                item.onclick = () => openReceipt(data, doc.id);
+                list.appendChild(item);
+            });
+        });
+}
+
+// Open Detailed Receipt Modal
+function openReceipt(data, id) {
+    const modal = document.getElementById('receipt-modal');
+    const iconContainer = document.getElementById('receipt-icon-container');
+    const statusText = document.getElementById('receipt-status-text');
+    const reasonBox = document.getElementById('rejection-box');
+
+    // Reset UI
+    reasonBox.style.display = 'none';
+    
+    // Set Data
+    document.getElementById('r-id-display').innerText = `ID: ${id.slice(0,8)}...`;
+    document.getElementById('r-phone').innerText = data.phone || 'N/A';
+    document.getElementById('r-type').innerText = data.type.toUpperCase();
+    document.getElementById('r-amount').innerText = `৳ ${data.amount}`;
+    document.getElementById('r-date').innerText = new Date(data.createdAt.toDate()).toLocaleString();
+    document.getElementById('r-trx').innerText = data.trxID || 'System';
+
+    // Status Logic
+    if(data.status === 'success') {
+        iconContainer.innerHTML = '<i class="fas fa-check"></i>';
+        iconContainer.className = 'icon-success';
+        statusText.innerText = 'Successful ✅';
+        statusText.style.color = '#2ecc71';
+    } else if(data.status === 'rejected') {
+        iconContainer.innerHTML = '<i class="fas fa-times"></i>';
+        iconContainer.className = 'icon-rejected';
+        statusText.innerText = 'Rejected ❌';
+        statusText.style.color = '#e74c3c';
+        
+        // Show Reason
+        reasonBox.style.display = 'block';
+        document.getElementById('r-reason').innerText = data.rejectionReason || "অজ্ঞাত কারণে বাতিল করা হয়েছে।";
+    } else {
+        iconContainer.innerHTML = '<i class="fas fa-clock"></i>';
+        iconContainer.className = 'icon-pending';
+        statusText.innerText = 'Pending 🕘';
+        statusText.style.color = '#f1c40f';
+    }
+
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('receipt-modal').style.display = 'none';
+}
+
+function copyText(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text);
+    alert("কপি করা হয়েছে: " + text);
+}
+
+// --- 6. Admin Panel Hooks (Placeholder) ---
+// ডিপোজিট ফাংশন (User Side)
+function submitDeposit() {
+    if(!isOfficeOpen()) {
+        alert("অফিস এখন বন্ধ! দয়া করে সকাল ৯টা থেকে রাত ৯:৩০ এর মধ্যে চেষ্টা করুন।");
+        return;
+    }
+    
+    const amount = document.getElementById('dep-amount').value;
+    const trx = document.getElementById('dep-trx').value;
+    
+    if(!amount || !trx) return alert("সব তথ্য পূরণ করুন!");
+
+    db.collection('transactions').add({
+        uid: auth.currentUser.uid,
+        type: 'deposit',
+        amount: parseInt(amount),
+        trxID: trx,
+        method: 'Nagad/Bkash', // এটা সিলেক্টেড মেথড থেকে নিবি
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        alert("ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে! এডমিন চেক করে ব্যালেন্স এড করে দেবে।");
+        showContent('history-screen');
+    });
+}
+
+// Initialize Logic
+auth.onAuthStateChanged(user => {
+    if (user) {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('app-section').style.display = 'block';
+        startLaunchTimer();
+        loadUserData();
+        loadHistory();
+    } else {
+        document.getElementById('auth-section').style.display = 'flex';
+        document.getElementById('app-section').style.display = 'none';
+    }
+});
