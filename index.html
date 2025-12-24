@@ -2,655 +2,798 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>টাকার গাছ - Takar Gach</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>টাকার গাছ | Takar Gach</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        /* ==================== CSS ভেরিয়েবল ও রিসেট ==================== */
+        :root {
+            --primary-gradient: linear-gradient(180deg, #00693e 0%, #004d2c 100%); /* গাঢ় সবুজ */
+            --bg-gradient: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-shadow: 0 4px 15px rgba(0, 105, 62, 0.08);
+            --text-main: #1a1a1a;
+            --text-light: #666;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --bkash: #e2136e;
+            --nagad: #f6921e;
+            --rocket: #8c3494;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-gradient); color: var(--text-main); height: 100vh; overflow: hidden; position: relative; }
+        
+        /* স্ক্রলবার লুকানো */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* ==================== হেডার সেকশন ==================== */
+        .app-header {
+            background: var(--primary-gradient);
+            padding: 20px 20px 60px 20px; /* নিচে জায়গা রাখা হয়েছে গ্রিডের জন্য */
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            color: white;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .profile-info { display: flex; align-items: center; gap: 10px; }
+        .profile-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); background: #eee; object-fit: cover; }
+        .profile-text h4 { font-size: 16px; font-weight: 700; line-height: 1.2; }
+        .profile-text span { font-size: 12px; opacity: 0.9; }
+
+        .notif-btn { position: relative; font-size: 22px; cursor: pointer; }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid #00693e; }
+
+        /* ব্যালেন্স বাটন (অ্যানিমেশন সহ) */
+        .balance-pill {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-align: center;
+            cursor: pointer;
+            width: 180px;
+            margin: 0 auto;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+        .balance-pill:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+        .balance-text { font-size: 14px; font-weight: 600; display: block; }
+        .balance-amount { font-size: 18px; font-weight: 700; display: none; animation: slideUp 0.3s ease; }
+
+        /* ==================== মেইন কন্টেইনার (পেজ স্লাইডার) ==================== */
+        #main-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 150px); /* হেডার বাদ দিয়ে */
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: transparent;
+            padding: 0 15px 100px 15px; /* বটম নেভ এর জন্য প্যাডিং */
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+            opacity: 0;
+            transform: translateX(100%);
+            pointer-events: none;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+            z-index: 5;
+        }
+
+        .page.exit { transform: translateX(-30%); opacity: 0; } /* আগের পেজ বামে সরে যাবে */
+
+        /* ==================== ড্যাশবোর্ড ডিজাইন ==================== */
+        /* মেইন অ্যাকশন বাটন (ডিপোজিট/উইথড্র) */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: -30px; /* হেডারের উপরে উঠে থাকবে */
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 20;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 5px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .action-card:active { transform: scale(0.95); }
+        .action-icon { font-size: 24px; margin-bottom: 5px; }
+        .action-card span { font-size: 11px; font-weight: 700; color: #444; display: block; }
+
+        /* কালার ক্লাস */
+        .c-dep { color: #00693e; } 
+        .c-wit { color: #dc2626; } 
+        .c-vip { color: #d97706; } 
+        .c-tsk { color: #2563eb; }
+
+        /* সেকেন্ডারি সার্ভিস গ্রিড */
+        .service-section { margin-bottom: 20px; }
+        .section-title { font-size: 14px; font-weight: 700; color: #00693e; margin-bottom: 10px; padding-left: 5px; border-left: 3px solid #00693e; line-height: 1; }
+        
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .service-item {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .service-item:active { background: #f0fdf4; border-color: #00693e; }
+        .service-item img { width: 35px; height: 35px; margin-bottom: 5px; }
+        .service-item span { font-size: 12px; color: #555; font-weight: 500; display: block; }
+
+        /* ব্যানার স্লাইডার */
+        .banner-area {
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(229, 46, 113, 0.3);
+        }
+        .marquee { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; width: 100%; }
+
+        /* ==================== সাব-পেজ ডিজাইন (হেডার সহ) ==================== */
+        .sub-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            font-size: 20px;
+            color: #333;
+            padding: 10px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        .page-title { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+
+        /* ফর্ম এবং ইনপুট */
+        .input-box { margin-bottom: 15px; }
+        .input-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 5px; display: block; }
+        .custom-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        .custom-input:focus { border-color: #00693e; box-shadow: 0 0 0 3px rgba(0, 105, 62, 0.1); }
+
+        .big-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(0, 105, 62, 0.3);
+            margin-top: 10px;
+        }
+        .big-btn:active { transform: scale(0.98); }
+
+        /* পেমেন্ট মেথড সিলেক্টর (লোগো সহ) */
+        .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .method-card {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+        .method-card img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
+        .method-card span { font-size: 12px; font-weight: 600; }
+        .method-card.active { border-color: #00693e; background: #f0fdf4; }
+        .method-card.active::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 5px; right: 5px;
+            color: #00693e;
+            font-size: 12px;
+        }
+
+        /* রিসিট কার্ড (পপ-আপ) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .receipt-card {
+            background: white;
+            width: 100%;
+            max-width: 350px;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .status-icon {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 30px;
+        }
+        .r-success { background: #d1fae5; color: #059669; }
+        .r-failed { background: #fee2e2; color: #dc2626; }
+        .r-pending { background: #fef3c7; color: #d97706; }
+
+        .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+        .receipt-row:last-child { border-bottom: none; }
+        .receipt-label { color: #666; }
+        .receipt-val { font-weight: 600; color: #333; }
+        
+        .copy-btn-small { background: #eee; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; margin-left: 5px; }
+
+        /* বটম নেভিগেশন */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white;
+            display: flex; justify-content: space-around;
+            padding: 12px 0;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            z-index: 50;
+        }
+        .nav-item { text-align: center; color: #9ca3af; cursor: pointer; transition: 0.3s; width: 25%; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; display: block; }
+        .nav-item span { font-size: 10px; font-weight: 600; }
+        .nav-item.active { color: #00693e; transform: translateY(-5px); }
+        .nav-item.active i { background: #e6f4ea; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; margin: 0 auto 4px; }
+
+        /* নোটিফিকেশন টোস্ট */
+        .toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 12px 20px; border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex; align-items: center; gap: 10px;
+            z-index: 200; transition: 0.5s; width: 90%; max-width: 350px;
+        }
+        .toast.show { top: 20px; }
+        .toast.success { border-left: 5px solid var(--success); }
+        .toast.error { border-left: 5px solid var(--danger); }
+
+        /* অ্যানিমেশন */
+        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    </style>
 </head>
 <body>
 
-    <div id="auth-section">
-        
-        <div id="register-screen" class="screen active">
-            <div class="auth-box">
-                <img src="https://i.ibb.co/vzCn3qY/money-tree-logo.png" alt="Logo" class="auth-logo">
-                <h2>নতুন একাউন্ট খুলুন</h2>
-                <form id="reg-form">
-                    <div class="input-group">
-                        <i class="fas fa-phone"></i>
-                        <input type="number" id="reg-phone" placeholder="মোবাইল নম্বর (১১ ডিজিট)" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="reg-email" placeholder="ইমেইল এড্রেস" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="reg-pass" placeholder="পাসওয়ার্ড" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-key"></i>
-                        <input type="password" id="reg-confirm-pass" placeholder="কনফার্ম পাসওয়ার্ড" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-gift"></i>
-                        <input type="text" id="reg-ref" placeholder="রেফারেল কোড (অপশনাল)">
-                    </div>
-
-                    <div class="captcha-container">
-                        <div id="captcha-display">1234</div>
-                        <i class="fas fa-sync-alt" onclick="generateCaptcha()"></i>
-                        <input type="text" id="captcha-input" placeholder="কোডটি লিখুন" required>
-                    </div>
-
-                    <button type="submit" class="primary-btn">রেজিস্টার করুন</button>
-                    <p class="switch-auth">অলরেডি একাউন্ট আছে? <span onclick="showScreen('login-screen')">লগইন</span></p>
-                </form>
+    <div class="app-header">
+        <div class="header-top">
+            <div class="profile-info">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User" class="profile-img">
+                <div class="profile-text">
+                    <h4 id="header-username">User Name</h4>
+                    <span id="header-phone">017XXXXXXXX</span>
+                </div>
+            </div>
+            <div class="notif-btn" onclick="showToast('কোনো নতুন নোটিফিকেশন নেই!', 'warning')">
+                <i class="far fa-bell"></i>
+                <span class="notif-badge">2</span>
             </div>
         </div>
-
-        <div id="login-screen" class="screen">
-            <div class="auth-box">
-                <img src="https://i.ibb.co/vzCn3qY/money-tree-logo.png" alt="Logo" class="auth-logo">
-                <h2>স্বাগতম ফিরে এসেছেন</h2>
-                <form id="login-form">
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="login-email" placeholder="ইমেইল" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="login-pass" placeholder="পাসওয়ার্ড" required>
-                    </div>
-                    <button type="submit" class="primary-btn">লগইন করুন</button>
-                    <p class="switch-auth">একাউন্ট নেই? <span onclick="showScreen('register-screen')">রেজিস্টার</span></p>
-                </form>
-            </div>
+        
+        <div class="balance-pill" onclick="toggleBalance()">
+            <span class="balance-text" id="bal-txt">ব্যালেন্স দেখুন</span>
+            <span class="balance-amount" id="bal-amt">৳ 0.00</span>
         </div>
     </div>
 
-    <div id="app-section" style="display: none;">
-        
-        <header>
-            <div class="header-top">
-                <div class="user-info">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User">
-                    <div>
-                        <h4 id="user-name-display">ব্যবহারকারী</h4>
-                        <span id="user-phone-display">017XXXXXXXX</span>
-                    </div>
+    <div id="main-container">
+
+        <div id="home-page" class="page active">
+            <div class="action-grid">
+                <div class="action-card" onclick="goToPage('deposit-page')">
+                    <div class="action-icon c-dep"><i class="fas fa-plus-circle"></i></div>
+                    <span>ডিপোজিট</span>
                 </div>
-                <div class="balance-card">
-                    <small>বর্তমান ব্যালেন্স</small>
-                    <h2 id="main-balance">৳ 0.00</h2>
+                <div class="action-card" onclick="goToPage('withdraw-page')">
+                    <div class="action-icon c-wit"><i class="fas fa-arrow-circle-down"></i></div>
+                    <span>ক্যাশআউট</span>
+                </div>
+                <div class="action-card" onclick="goToPage('vip-page')">
+                    <div class="action-icon c-vip"><i class="fas fa-crown"></i></div>
+                    <span>ভিআইপি</span>
+                </div>
+                <div class="action-card" onclick="goToPage('task-page')">
+                    <div class="action-icon c-tsk"><i class="fas fa-tasks"></i></div>
+                    <span>কাজ</span>
                 </div>
             </div>
-            
-            <div class="launch-timer-banner">
-                <i class="fas fa-rocket"></i> বট লঞ্চের মেয়াদ: 
-                <span id="launch-timer">00 মাস 00 দিন 00:00:00</span>
-            </div>
-        </header>
 
-        <div id="main-content">
-            
-            <div id="home-screen" class="content-screen active">
-                <div class="promo-banner">
-                    <h3>স্পেশাল অফার! 🚩</h3>
-                    <p>১০ জন রেফার করতে পারলে ২০ টাকা এক্সট্রা বোনাস।</p>
+            <div class="banner-area">
+                <i class="fas fa-bullhorn"></i>
+                <div class="marquee">
+                    বিশেষ বিজ্ঞপ্তি: আমাদের অফিস সময় সকাল ৯টা থেকে রাত ৯:৩০ পর্যন্ত। এর বাইরে পেমেন্ট রিকোয়েস্ট পেন্ডিং থাকবে।
                 </div>
+            </div>
 
-                <div class="menu-grid">
-                    <div class="menu-item" onclick="showContent('vip-screen')">
-                        <div class="icon-box vip"><i class="fas fa-crown"></i></div>
-                        <span>ভিআইপি</span>
+            <div class="service-section">
+                <div class="section-title">অন্যান্য সেবা</div>
+                <div class="service-grid">
+                    <div class="service-item" onclick="claimDailyBonus()">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2662/2662503.png" alt="Bonus">
+                        <span>ডেইলি বোনাস</span>
                     </div>
-                    <div class="menu-item" onclick="showContent('task-screen')">
-                        <div class="icon-box task"><i class="fas fa-tasks"></i></div>
-                        <span>কাজ</span>
+                    <div class="service-item" onclick="showToast('লিডারবোর্ড লোড হচ্ছে...', 'success')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1603/1603847.png" alt="Leaderboard">
+                        <span>সেরা ১০</span>
                     </div>
-                    <div class="menu-item" onclick="showContent('withdraw-screen')">
-                        <div class="icon-box withdraw"><i class="fas fa-wallet"></i></div>
-                        <span>ক্যাশআউট</span>
+                    <div class="service-item" onclick="comingSoon()">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2331/2331941.png" alt="Spin">
+                        <span>লাকি স্পিন</span>
                     </div>
-                    <div class="menu-item" onclick="showContent('deposit-screen')">
-                        <div class="icon-box deposit"><i class="fas fa-university"></i></div>
-                        <span>ডিপোজিট</span>
+                    <div class="service-item" onclick="comingSoon()">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2534/2534204.png" alt="Recharge">
+                        <span>রিচার্জ</span>
                     </div>
-                    <div class="menu-item" onclick="showContent('history-screen')">
-                        <div class="icon-box history"><i class="fas fa-receipt"></i></div>
-                        <span>হিস্টরি</span>
+                    <div class="service-item" onclick="comingSoon()">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3065/3065873.png" alt="Quiz">
+                        <span>কুইজ খেলুন</span>
                     </div>
-                    <div class="menu-item" onclick="showContent('support-screen')">
-                        <div class="icon-box support"><i class="fab fa-telegram-plane"></i></div>
+                    <div class="service-item" onclick="window.open('https://t.me/YOUR_LINK')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Support">
                         <span>সাপোর্ট</span>
                     </div>
-                    <div class="menu-item" onclick="showContent('rules-screen')">
-                        <div class="icon-box rules"><i class="fas fa-scroll"></i></div>
-                        <span>নিয়মাবলী</span>
-                    </div>
-                    <div class="menu-item" onclick="openShareModal()">
-                        <div class="icon-box share"><i class="fas fa-share-alt"></i></div>
-                        <span>শেয়ার</span>
-                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="deposit-page" class="page">
+            <div class="sub-header">
+                <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
+                <span class="page-title">ডিপোজিট করুন</span>
+            </div>
+
+            <div class="input-label">মেথড সিলেক্ট করুন:</div>
+            <div class="method-grid">
+                <div class="method-card active" onclick="selectMethod(this, 'bkash', '017XXXXXXXX')">
+                    <img src="https://freelogopng.com/images/all_img/1656234745bkash-app-logo-png.png" alt="Bkash">
+                    <span>বিকাশ</span>
+                </div>
+                <div class="method-card" onclick="selectMethod(this, 'nagad', '018XXXXXXXX')">
+                    <img src="https://freelogopng.com/images/all_img/1679248787Nagad-Logo.png" alt="Nagad">
+                    <span>নগদ</span>
+                </div>
+                <div class="method-card" onclick="selectMethod(this, 'rocket', '019XXXXXXXX')">
+                    <img src="https://freelogopng.com/images/all_img/1656235336rocket-logo-png.png" alt="Rocket">
+                    <span>রকেট</span>
                 </div>
             </div>
 
-            <div id="vip-screen" class="content-screen">
-                <div class="section-header">
-                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
-                    <h3>ভিআইপি প্যাকেজ</h3>
-                </div>
-                <div id="my-plan-status" class="plan-timer-box" style="display:none;">
-                    <span>আপনার বর্তমান প্ল্যান: <b id="current-plan-name">Free</b></span>
-                    <div class="timer-display">মেয়াদ: <span id="plan-expiry-timer">--:--:--</span></div>
-                </div>
-                <div id="vip-list-container">
-                    <div class="loading-spinner">প্যাকেজ লোড হচ্ছে...</div>
+            <div style="background: #e6f4ea; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed #00693e;">
+                <span style="font-size:12px; color:#555;">নিচের নম্বরে Send Money করুন:</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                    <b id="dep-number-display" style="font-size:18px; color:#00693e;">017XXXXXXXX</b>
+                    <button class="copy-btn-small" onclick="copyNum()">COPY</button>
                 </div>
             </div>
 
-            <div id="task-screen" class="content-screen">
-                <div class="section-header">
-                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
-                    <h3>আজকের কাজ</h3>
+            <div class="input-box">
+                <label class="input-label">পরিমাণ (টাকা)</label>
+                <input type="number" class="custom-input" placeholder="৫০০" id="dep-amount">
+            </div>
+            <div class="input-box">
+                <label class="input-label">আপনার নাম্বার</label>
+                <input type="number" class="custom-input" placeholder="01xxxxxxxxx" id="dep-phone">
+            </div>
+            <div class="input-box">
+                <label class="input-label">ট্রানজেকশন আইডি (TrxID)</label>
+                <input type="text" class="custom-input" placeholder="X7Y8Z..." id="dep-trx">
+            </div>
+
+            <button class="big-btn" onclick="submitDeposit()">পেমেন্ট নিশ্চিত করুন</button>
+        </div>
+
+        <div id="withdraw-page" class="page">
+            <div class="sub-header">
+                <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
+                <span class="page-title">টাকা তুলুন</span>
+            </div>
+
+            <div style="background: #fff3cd; padding: 10px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #856404;">
+                <i class="fas fa-info-circle"></i> মিনিমাম উইথড্র ৫০ টাকা। চার্জ প্রযোজ্য হতে পারে।
+            </div>
+
+            <div class="input-label">মেথড:</div>
+            <div class="method-grid">
+                <div class="method-card active" onclick="selectWMethod(this, 'bkash')">
+                    <img src="https://freelogopng.com/images/all_img/1656234745bkash-app-logo-png.png" alt="Bkash">
+                    <span>বিকাশ</span>
                 </div>
-                <div class="task-warning">
-                    <i class="fas fa-exclamation-circle"></i> সঠিক ভাবে কাজ না করলে পেমেন্ট পাবেন না।
+                <div class="method-card" onclick="selectWMethod(this, 'nagad')">
+                    <img src="https://freelogopng.com/images/all_img/1679248787Nagad-Logo.png" alt="Nagad">
+                    <span>নগদ</span>
                 </div>
-                <div id="task-list-container">
+                <div class="method-card" onclick="selectWMethod(this, 'rocket')">
+                    <img src="https://freelogopng.com/images/all_img/1656235336rocket-logo-png.png" alt="Rocket">
+                    <span>রকেট</span>
+                </div>
+            </div>
+
+            <div class="input-box">
+                <label class="input-label">পরিমাণ</label>
+                <input type="number" class="custom-input" placeholder="৫০ - ২৫০০০" id="with-amount">
+            </div>
+            <div class="input-box">
+                <label class="input-label">আপনার পার্সোনাল নাম্বার</label>
+                <input type="number" class="custom-input" placeholder="01xxxxxxxxx" id="with-phone">
+            </div>
+
+            <button class="big-btn" style="background: linear-gradient(90deg, #dc2626, #b91c1c);" onclick="submitWithdraw()">উইথড্র করুন</button>
+        </div>
+
+        <div id="history-page" class="page">
+            <div class="sub-header">
+                <span class="page-title" style="margin-left:10px;">লেনদেন হিস্টরি</span>
+            </div>
+            
+            <div id="history-list-container">
+                <div class="action-card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; text-align:left; padding:15px;">
+                    <div style="display:flex; gap:10px;">
+                        <div style="background:#e6f4ea; width:40px; height:40px; border-radius:50%; display:flex; justify-content:center; align-items:center; color:green;"><i class="fas fa-arrow-down"></i></div>
+                        <div>
+                            <h5 style="margin:0;">Deposit</h5>
+                            <small style="color:#888;">12 Dec, 10:30 PM</small>
+                        </div>
                     </div>
-            </div>
-
-            <div id="deposit-screen" class="content-screen">
-                <div class="section-header">
-                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
-                    <h3>ডিপোজিট করুন</h3>
-                </div>
-                <div class="payment-methods">
-                    <div class="method active" onclick="selectMethod('bkash')"><img src="https://i.ibb.co/5L4r6x5/bkash.png" alt="Bkash">বিকাশ</div>
-                    <div class="method" onclick="selectMethod('nagad')"><img src="https://i.ibb.co/7QzDq4x/nagad.png" alt="Nagad">নগদ</div>
-                </div>
-                <div class="deposit-form">
-                    <div class="number-copy-box">
-                        <span id="admin-number">017XXXXXXXX</span>
-                        <button onclick="copyNumber()">COPY</button>
+                    <div style="text-align:right;">
+                        <h4 style="margin:0; color:green;">+৳500</h4>
+                        <span style="background:#d1fae5; color:green; padding:2px 8px; border-radius:10px; font-size:10px;">Success</span>
+                        <br>
+                        <small onclick="openReceipt('success')" style="color:#2563eb; text-decoration:underline; cursor:pointer;">রিসিট</small>
                     </div>
-                    <p class="note-text">শুধুমাত্র "Send Money" করবেন।</p>
-                    
-                    <input type="number" id="dep-amount" placeholder="টাকার পরিমাণ">
-                    <input type="number" id="dep-sender" placeholder="যে নাম্বার থেকে পাঠিয়েছেন">
-                    <input type="text" id="dep-trx" placeholder="ট্রানজেকশন আইডি (TrxID)">
-                    
-                    <button class="primary-btn" onclick="submitDeposit()">জমা দিন</button>
                 </div>
-            </div>
-
-            <div id="history-screen" class="content-screen">
-                <div class="section-header">
-                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
-                    <h3>লেনদেন হিস্টরি</h3>
-                </div>
-                <div class="history-tabs">
-                    <button class="active" onclick="filterHistory('all')">সব</button>
-                    <button onclick="filterHistory('withdraw')">উইথড্র</button>
-                    <button onclick="filterHistory('deposit')">ডিপোজিট</button>
-                </div>
-                <div id="history-list">
+                
+                <div class="action-card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; text-align:left; padding:15px;">
+                    <div style="display:flex; gap:10px;">
+                        <div style="background:#fee2e2; width:40px; height:40px; border-radius:50%; display:flex; justify-content:center; align-items:center; color:red;"><i class="fas fa-arrow-up"></i></div>
+                        <div>
+                            <h5 style="margin:0;">Withdraw</h5>
+                            <small style="color:#888;">12 Dec, 09:15 AM</small>
+                        </div>
                     </div>
-            </div>
-
-            <div id="rules-screen" class="content-screen">
-                <div class="section-header">
-                    <i class="fas fa-arrow-left" onclick="showContent('home-screen')"></i>
-                    <h3>নিয়মাবলী ও পলিসি</h3>
-                </div>
-                <div class="rules-content">
-                    <h4>⚠️ সাধারণ সতর্কবার্তা</h4>
-                    <p>১. একাধিক একাউন্ট করা সম্পূর্ণ নিষিদ্ধ। ধরা পড়লে সব একাউন্ট ব্যান হবে।</p>
-                    <p>২. ভুল তথ্য দিয়ে টাকা তোলার চেষ্টা করবেন না।</p>
-                    <hr>
-                    <h4>⏰ অফিস সময়</h4>
-                    <p>সকাল ৯:০০ টা থেকে রাত ৯:৩০ পর্যন্ত আমাদের সকল কার্যক্রম চালু থাকে। এর বাইরে রিকোয়েস্ট দিলে পরদিন প্রসেস করা হবে।</p>
-                    <hr>
-                    <h4>🔒 প্রাইভেসি পলিসি</h4>
-                    <p>আপনার সকল তথ্য আমাদের কাছে সুরক্ষিত...</p>
+                    <div style="text-align:right;">
+                        <h4 style="margin:0; color:red;">-৳200</h4>
+                        <span style="background:#fee2e2; color:red; padding:2px 8px; border-radius:10px; font-size:10px;">Rejected</span>
+                        <br>
+                        <small onclick="openReceipt('rejected')" style="color:#2563eb; text-decoration:underline; cursor:pointer;">রিসিট</small>
                     </div>
+                </div>
             </div>
+        </div>
+        
+        <div id="vip-page" class="page">
+            <div class="sub-header">
+                <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
+                <span class="page-title">ভিআইপি প্যাকেজ</span>
+            </div>
+            <div style="text-align:center; margin-top:50px; color:#666;">
+                <i class="fas fa-crown" style="font-size:50px; color:#d97706; margin-bottom:20px;"></i>
+                <p>প্যাকেজগুলো লোড হচ্ছে...</p>
+            </div>
+        </div>
 
-        </div> <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showContent('home-screen')">
-                <i class="fas fa-home"></i>
-                <span>হোম</span>
+        <div id="task-page" class="page">
+            <div class="sub-header">
+                <div class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i></div>
+                <span class="page-title">আজকের কাজ</span>
             </div>
-            <div class="nav-item" onclick="showContent('task-screen')">
-                <i class="fas fa-list-check"></i>
-                <span>কাজ</span>
+             <div style="text-align:center; margin-top:50px; color:#666;">
+                <i class="fas fa-clipboard-list" style="font-size:50px; color:#2563eb; margin-bottom:20px;"></i>
+                <p>নতুন কাজ খোঁজা হচ্ছে...</p>
             </div>
-            <div class="nav-item" onclick="showContent('history-screen')">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span>লেনদেন</span>
-            </div>
-            <div class="nav-item" onclick="showContent('rules-screen')">
-                <i class="fas fa-user"></i>
-                <span>প্রোফাইল</span>
-            </div>
-        </nav>
+        </div>
+
+    </div> <div class="bottom-nav">
+        <div class="nav-item active" onclick="goHome()">
+            <i class="fas fa-home"></i> <span>হোম</span>
+        </div>
+        <div class="nav-item" onclick="goToPage('task-page')">
+            <i class="fas fa-list-check"></i> <span>কাজ</span>
+        </div>
+        <div class="nav-item" onclick="goToPage('history-page')">
+            <i class="fas fa-history"></i> <span>হিস্টরি</span>
+        </div>
+        <div class="nav-item" onclick="showToast('প্রোফাইল পেজ কাজ করছে', 'success')">
+            <i class="fas fa-user"></i> <span>প্রোফাইল</span>
+        </div>
     </div>
 
-    <div id="receipt-modal" class="modal">
-        <div class="modal-content receipt-card">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <div id="receipt-icon-container">
-                </div>
-            <h2 id="receipt-status-text">Successful</h2>
-            <p id="receipt-id-display">ID: Txn_123456</p>
+    <div class="modal-overlay" id="receipt-modal">
+        <div class="receipt-card">
+            <div class="status-icon r-success" id="r-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 id="r-title" style="margin-bottom:5px;">লেনদেন সফল</h2>
+            <p id="r-msg" style="font-size:12px; color:#666; margin-bottom:20px;">আপনার লেনদেনটি সফলভাবে সম্পন্ন হয়েছে।</p>
             
-            <div class="receipt-details">
-                <div class="detail-row">
-                    <span>User Phone</span>
-                    <span id="r-phone">017...</span>
-                </div>
-                <div class="detail-row">
-                    <span>Type</span>
-                    <span id="r-type">Withdraw</span>
-                </div>
-                <div class="detail-row">
-                    <span>Amount</span>
-                    <b id="r-amount">৳ 500</b>
-                </div>
-                <div class="detail-row">
-                    <span>Date</span>
-                    <span id="r-date">12/12/2025</span>
-                </div>
-                <div class="detail-row">
-                    <span>TrxID</span>
-                    <span id="r-trx" class="copy-able" onclick="copyText('r-trx')">--</span>
-                </div>
+            <div class="receipt-row">
+                <span class="receipt-label">TrxID</span>
+                <span class="receipt-val">TXN849384 <i class="fas fa-copy" style="font-size:10px; color:#aaa;"></i></span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">মেথড</span>
+                <span class="receipt-val" id="r-method">Bkash</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">পরিমাণ</span>
+                <span class="receipt-val" id="r-amount">৳ 500.00</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">সময়</span>
+                <span class="receipt-val">12 Dec, 2025</span>
             </div>
 
-            <div id="rejection-box" class="rejection-alert" style="display:none;">
-                <strong>🔴 Rejection Reason:</strong>
-                <p id="r-reason">সঠিক নিয়মে কাজ করেননি।</p>
+            <div id="reject-reason-box" style="display:none; background:#fee2e2; padding:10px; border-radius:8px; margin-top:15px; font-size:12px; color:#b91c1c; text-align:left;">
+                <strong>কারণ:</strong> <span id="r-reason-text">ভুল ট্রানজেকশন আইডি দিয়েছেন।</span>
             </div>
 
-            <button class="close-btn" onclick="closeModal()">CLOSE WINDOW</button>
+            <button onclick="closeReceipt()" style="margin-top:20px; width:100%; padding:10px; border:none; background:#eee; border-radius:10px; font-weight:bold; cursor:pointer;">বন্ধ করুন</button>
         </div>
+    </div>
+
+    <div class="toast" id="toast-box">
+        <i class="fas fa-check-circle" style="color:var(--success); font-size:20px;"></i>
+        <span style="font-size:13px; font-weight:600;">সফল হয়েছে!</span>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    
-    <script src="app.js"></script>
-</body>
-</html>
-:root {
-    --primary: #008751; /* Grameenphone like Green */
-    --primary-dark: #006039;
-    --accent: #ffa500; /* Gold/Orange */
-    --bg: #f2f5f8;
-    --white: #ffffff;
-    --text: #333333;
-    --danger: #e74c3c;
-    --success: #2ecc71;
-    --warning: #f1c40f;
-}
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
-body { background-color: var(--bg); color: var(--text); height: 100vh; overflow-x: hidden; }
+    <script>
+        // --- CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSyIjbEj8F8ipbs2wEmaKKTt9OThpX2AM",
+            authDomain: "takar-gash.firebaseapp.com",
+            projectId: "takar-gash",
+            storageBucket: "takar-gash.firebasestorage.app",
+            messagingSenderId: "796583669978",
+            appId: "1:796583669978:web:9dbd8680e1a98dba30b5e3"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-/* --- Auth Styles --- */
-#auth-section { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
-.screen { display: none; width: 100%; max-width: 400px; padding: 20px; }
-.screen.active { display: block; animation: fadeIn 0.5s; }
-.auth-box { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
-.auth-logo { width: 80px; margin-bottom: 10px; }
-.input-group { position: relative; margin-bottom: 15px; text-align: left; }
-.input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #777; }
-.input-group input { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; }
-.input-group input:focus { border-color: var(--primary); }
-.primary-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-.primary-btn:active { transform: scale(0.98); }
-.switch-auth { margin-top: 15px; font-size: 14px; }
-.switch-auth span { color: var(--primary); font-weight: bold; cursor: pointer; }
+        // --- GLOBAL VARS ---
+        let currentDepMethod = 'bkash';
+        let currentDepNumber = '017XXXXXXXX';
+        let currentWithMethod = 'bkash';
 
-/* Captcha */
-.captcha-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #eee; padding: 5px; border-radius: 8px; }
-#captcha-display { font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; letter-spacing: 5px; background: #fff; padding: 5px 15px; border-radius: 5px; text-decoration: line-through; color: var(--primary-dark); }
-.captcha-container i { cursor: pointer; padding: 10px; }
-#captcha-input { width: 120px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+        // --- NAVIGATION SYSTEM (Double Page Feel) ---
+        function goToPage(pageId) {
+            // Hide all pages (move to exit)
+            document.querySelectorAll('.page').forEach(p => {
+                if(p.classList.contains('active')) {
+                    p.classList.remove('active');
+                    p.classList.add('exit');
+                }
+            });
 
-/* --- App Main Styles --- */
-header { background: var(--primary); padding: 20px 20px 50px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; position: relative; }
-.header-top { display: flex; justify-content: space-between; align-items: center; }
-.user-info { display: flex; align-items: center; gap: 10px; }
-.user-info img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; }
-.balance-card { text-align: right; }
-.launch-timer-banner { background: #333; color: #fff; padding: 8px; font-size: 12px; text-align: center; position: absolute; bottom: 0; left: 0; width: 100%; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
+            // Show new page
+            const target = document.getElementById(pageId);
+            target.classList.remove('exit');
+            target.classList.add('active');
 
-#main-content { padding: 20px; padding-bottom: 80px; margin-top: -30px; }
-.content-screen { display: none; animation: slideUp 0.3s; }
-.content-screen.active { display: block; }
-
-/* Home Menu */
-.promo-banner { background: linear-gradient(to right, #ff7e5f, #feb47b); color: white; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4); }
-.menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-.menu-item { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
-.icon-box { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; margin-bottom: 5px; color: white; transition: transform 0.2s; }
-.menu-item:hover .icon-box { transform: scale(1.1); }
-.menu-item span { font-size: 12px; font-weight: 600; color: #555; }
-
-/* Icon Colors */
-.vip { background: #f1c40f; } .task { background: #3498db; } .withdraw { background: #e74c3c; } .deposit { background: #2ecc71; }
-.history { background: #9b59b6; } .support { background: #34495e; } .rules { background: #95a5a6; } .share { background: #e67e22; }
-
-/* List Styles (History/Tasks) */
-.history-item, .package-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
-.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-.status-pending { background: #fff3cd; color: #856404; }
-.status-success { background: #d4edda; color: #155724; }
-.status-rejected { background: #f8d7da; color: #721c24; }
-
-/* Receipt Modal */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-.receipt-card { background: white; width: 90%; max-width: 350px; padding: 25px; border-radius: 20px; text-align: center; position: relative; animation: zoomIn 0.3s; }
-#receipt-icon-container { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-.icon-success { background: #d4edda; color: #2ecc71; }
-.icon-rejected { background: #f8d7da; color: #e74c3c; }
-.icon-pending { background: #fff3cd; color: #f1c40f; }
-.receipt-details { margin-top: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px dashed #ccc; }
-.detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-.rejection-alert { background: #ffeaea; padding: 10px; border-radius: 8px; margin-top: 15px; text-align: left; font-size: 13px; color: #d63031; border-left: 4px solid #d63031; }
-
-/* Bottom Nav */
-.bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; }
-.nav-item { display: flex; flex-direction: column; align-items: center; color: #999; cursor: pointer; }
-.nav-item.active { color: var(--primary); }
-.nav-item i { font-size: 20px; margin-bottom: 2px; }
-
-/* Animations */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-// --- 1. Firebase Configuration ---
-// তোর দেওয়া কনফিগ এখানে বসালাম
-const firebaseConfig = {
-    apiKey: "AIzaSyDSyIjbEj8F8ipbs2wEmaKKTt9OThpX2AM",
-    authDomain: "takar-gash.firebaseapp.com",
-    projectId: "takar-gash",
-    storageBucket: "takar-gash.firebasestorage.app",
-    messagingSenderId: "796583669978",
-    appId: "1:796583669978:web:9dbd8680e1a98dba30b5e3",
-    measurementId: "G-E6J8VSZ0PL"
-};
-
-// Firebase Init
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// --- 2. Global Variables & Utility ---
-let currentUser = null;
-let currentCaptcha = "";
-
-// Launch Timer (ডিসেম্বর ১৫, ১০:০০ থেকে শুরু)
-function startLaunchTimer() {
-    const launchDate = new Date("2023-12-15T10:00:00").getTime(); // সাল পরিবর্তন করিস প্রয়োজনে
-    
-    setInterval(() => {
-        const now = new Date().getTime();
-        const distance = now - launchDate;
-
-        if (distance < 0) {
-             document.getElementById("launch-timer").innerText = "শীঘ্রই আসছে...";
-             return;
+            // Bottom Nav Update
+            updateNav(pageId);
         }
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        function goHome() {
+            goToPage('home-page');
+            // Reset Exit classes
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('exit'));
+        }
 
-        document.getElementById("launch-timer").innerText = `${days} দিন ${hours} ঘণ্টা ${minutes} মি ${seconds} সে`;
-    }, 1000);
-}
+        function updateNav(pageId) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(pageId === 'home-page') document.querySelectorAll('.nav-item')[0].classList.add('active');
+            if(pageId === 'task-page') document.querySelectorAll('.nav-item')[1].classList.add('active');
+            if(pageId === 'history-page') document.querySelectorAll('.nav-item')[2].classList.add('active');
+        }
 
-// Office Time Checker (9:00 AM - 9:30 PM)
-function isOfficeOpen() {
-    const now = new Date();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    
-    const timeInMinutes = hour * 60 + minutes;
-    const start = 9 * 60; // 9:00 AM
-    const end = 21 * 60 + 30; // 9:30 PM
-    
-    return timeInMinutes >= start && timeInMinutes <= end;
-}
-
-// --- 3. Auth System ---
-function generateCaptcha() {
-    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let captcha = "";
-    for (let i = 0; i < 4; i++) {
-        captcha += chars[Math.floor(Math.random() * chars.length)];
-    }
-    currentCaptcha = captcha;
-    document.getElementById("captcha-display").innerText = captcha;
-}
-generateCaptcha(); // Init
-
-// Register
-document.getElementById('reg-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const phone = document.getElementById('reg-phone').value;
-    const email = document.getElementById('reg-email').value;
-    const pass = document.getElementById('reg-pass').value;
-    const confirmPass = document.getElementById('reg-confirm-pass').value;
-    const captchaInput = document.getElementById('captcha-input').value;
-
-    if (phone.length !== 11) return alert("১১ ডিজিটের মোবাইল নম্বর দিন!");
-    if (pass !== confirmPass) return alert("পাসওয়ার্ড মিলছে না!");
-    if (captchaInput.toUpperCase() !== currentCaptcha) return alert("ক্যাপচা ভুল হয়েছে!");
-
-    auth.createUserWithEmailAndPassword(email, pass)
-        .then((cred) => {
-            // Firestore এ ইউজার ডাটা সেভ
-            return db.collection('users').doc(cred.user.uid).set({
-                phone: phone,
-                email: email,
-                balance: 0,
-                vipLevel: 'Free',
-                vipExpiry: null,
-                joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        })
-        .then(() => {
-            alert("রেজিস্ট্রেশন সফল!");
-            showScreen('login-screen');
-        })
-        .catch((err) => alert(err.message));
-});
-
-// Login
-document.getElementById('login-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-pass').value;
-
-    auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('app-section').style.display = 'block';
-            startLaunchTimer();
-            loadUserData();
-        })
-        .catch((err) => alert("লগইন ব্যর্থ: " + err.message));
-});
-
-// Load User Data Realtime
-function loadUserData() {
-    const uid = auth.currentUser.uid;
-    db.collection('users').doc(uid).onSnapshot((doc) => {
-        if(doc.exists) {
-            const data = doc.data();
-            document.getElementById('main-balance').innerText = `৳ ${data.balance}`;
-            document.getElementById('user-phone-display').innerText = data.phone;
+        // --- BALANCE TOGGLE ---
+        function toggleBalance() {
+            const txt = document.getElementById('bal-txt');
+            const amt = document.getElementById('bal-amt');
             
-            // VIP Check
-            if(data.vipLevel !== 'Free' && data.vipExpiry) {
-                document.getElementById('my-plan-status').style.display = 'block';
-                document.getElementById('current-plan-name').innerText = data.vipLevel;
-                // VIP Countdown logic here...
+            if(amt.style.display === 'block') return; // Already showing
+
+            txt.style.display = 'none';
+            amt.style.display = 'block';
+            amt.innerText = '৳ ৫০০.০০'; // ডেমো ব্যালেন্স, রিয়েলটা ফায়ারবেস থেকে আসবে
+
+            // 3 সেকেন্ড পর হাইড হবে
+            setTimeout(() => {
+                amt.style.display = 'none';
+                txt.style.display = 'block';
+            }, 3000);
+        }
+
+        // --- DEPOSIT LOGIC ---
+        function selectMethod(el, method, number) {
+            currentDepMethod = method;
+            currentDepNumber = number;
+            
+            // UI Update
+            document.querySelectorAll('#deposit-page .method-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Number Update
+            document.getElementById('dep-number-display').innerText = number;
+        }
+
+        function copyNum() {
+            navigator.clipboard.writeText(currentDepNumber);
+            showToast('নাম্বার কপি হয়েছে!', 'success');
+        }
+
+        function submitDeposit() {
+            const amt = document.getElementById('dep-amount').value;
+            const trx = document.getElementById('dep-trx').value;
+
+            if(!amt || !trx) return showToast('সব তথ্য পূরণ করুন!', 'error');
+
+            showToast('রিকোয়েস্ট প্রসেসিং...', 'success');
+            // Firebase Logic Here...
+            setTimeout(() => {
+                goHome();
+                showToast('ডিপোজিট রিকোয়েস্ট জমা হয়েছে ✅', 'success');
+            }, 1000);
+        }
+
+        // --- WITHDRAW LOGIC ---
+        function selectWMethod(el, method) {
+            currentWithMethod = method;
+            document.querySelectorAll('#withdraw-page .method-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function submitWithdraw() {
+            const amt = document.getElementById('with-amount').value;
+            const phn = document.getElementById('with-phone').value;
+
+            if(amt < 50) return showToast('মিনিমাম ৫০ টাকা!', 'error');
+            if(!phn) return showToast('নাম্বার দিন!', 'error');
+
+            showToast('উইথড্র সফল হয়েছে ✅', 'success');
+            goHome();
+        }
+
+        // --- RECEIPT POPUP ---
+        function openReceipt(status) {
+            const modal = document.getElementById('receipt-modal');
+            const icon = document.getElementById('r-icon');
+            const title = document.getElementById('r-title');
+            const box = document.getElementById('reject-reason-box');
+
+            modal.style.display = 'flex';
+            
+            if(status === 'success') {
+                icon.className = 'status-icon r-success';
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+                title.innerText = 'লেনদেন সফল';
+                title.style.color = 'var(--success)';
+                box.style.display = 'none';
+            } else {
+                icon.className = 'status-icon r-failed';
+                icon.innerHTML = '<i class="fas fa-times"></i>';
+                title.innerText = 'লেনদেন বাতিল';
+                title.style.color = 'var(--danger)';
+                box.style.display = 'block';
             }
         }
-    });
-}
 
-// --- 4. Navigation & UI Logic ---
-function showScreen(screenId) {
-    // Hide all screens in Auth section
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(screenId);
-    if(target) target.classList.add('active');
-}
+        function closeReceipt() {
+            document.getElementById('receipt-modal').style.display = 'none';
+        }
 
-function showContent(contentId) {
-    document.querySelectorAll('.content-screen').forEach(c => c.classList.remove('active'));
-    document.getElementById(contentId).classList.add('active');
-}
+        // --- TOAST ALERT ---
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast-box');
+            toast.innerHTML = type === 'success' 
+                ? `<i class="fas fa-check-circle" style="color:green; font-size:20px;"></i> <span>${msg}</span>`
+                : `<i class="fas fa-exclamation-circle" style="color:red; font-size:20px;"></i> <span>${msg}</span>`;
+            
+            toast.className = `toast show ${type}`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
-// --- 5. History & Receipt System ---
-// এডমিন প্যানেল থেকে রিজেক্ট করলে এখানে শো করবে
-function loadHistory() {
-    const uid = auth.currentUser.uid;
-    const list = document.getElementById('history-list');
-    list.innerHTML = '<p style="text-align:center;">লোড হচ্ছে...</p>';
+        // --- EXTRA FEATURES ---
+        function comingSoon() {
+            showToast('এই ফিচারটি শীঘ্রই আসছে! 🚀', 'warning');
+        }
 
-    db.collection('transactions').where('uid', '==', uid)
-        .orderBy('createdAt', 'desc')
-        .onSnapshot((snapshot) => {
-            list.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const statusClass = data.status === 'success' ? 'status-success' : (data.status === 'rejected' ? 'status-rejected' : 'status-pending');
-                const icon = data.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up';
-                
-                const item = document.createElement('div');
-                item.className = 'history-item';
-                item.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <div class="icon-box" style="background:#eee; color:#555; width:35px; height:35px;"><i class="fas ${icon}"></i></div>
-                        <div>
-                            <h5 style="text-transform:capitalize;">${data.type}</h5>
-                            <small>${new Date(data.createdAt.toDate()).toLocaleDateString()}</small>
-                        </div>
-                    </div>
-                    <div style="text-align:right;">
-                        <h4>৳ ${data.amount}</h4>
-                        <span class="status-badge ${statusClass}">${data.status}</span>
-                    </div>
-                `;
-                // Click to open Receipt
-                item.onclick = () => openReceipt(data, doc.id);
-                list.appendChild(item);
-            });
+        function claimDailyBonus() {
+            // Check logic (Once per 24h)
+            showToast('অভিনন্দন! ১০ পয়সা বোনাস পেয়েছেন 🎉', 'success');
+        }
+
+        // --- INIT ---
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                // Load user data
+                document.getElementById('header-username').innerText = "Rihan Ahmed"; // Demo
+            } else {
+                // Redirect to Login if needed (Auth page code omitted for single-file size, add Auth div here if needed)
+                console.log("No user logged in");
+            }
         });
-}
 
-// Open Detailed Receipt Modal
-function openReceipt(data, id) {
-    const modal = document.getElementById('receipt-modal');
-    const iconContainer = document.getElementById('receipt-icon-container');
-    const statusText = document.getElementById('receipt-status-text');
-    const reasonBox = document.getElementById('rejection-box');
+    </script>
+</body>
+</html>
 
-    // Reset UI
-    reasonBox.style.display = 'none';
-    
-    // Set Data
-    document.getElementById('r-id-display').innerText = `ID: ${id.slice(0,8)}...`;
-    document.getElementById('r-phone').innerText = data.phone || 'N/A';
-    document.getElementById('r-type').innerText = data.type.toUpperCase();
-    document.getElementById('r-amount').innerText = `৳ ${data.amount}`;
-    document.getElementById('r-date').innerText = new Date(data.createdAt.toDate()).toLocaleString();
-    document.getElementById('r-trx').innerText = data.trxID || 'System';
-
-    // Status Logic
-    if(data.status === 'success') {
-        iconContainer.innerHTML = '<i class="fas fa-check"></i>';
-        iconContainer.className = 'icon-success';
-        statusText.innerText = 'Successful ✅';
-        statusText.style.color = '#2ecc71';
-    } else if(data.status === 'rejected') {
-        iconContainer.innerHTML = '<i class="fas fa-times"></i>';
-        iconContainer.className = 'icon-rejected';
-        statusText.innerText = 'Rejected ❌';
-        statusText.style.color = '#e74c3c';
-        
-        // Show Reason
-        reasonBox.style.display = 'block';
-        document.getElementById('r-reason').innerText = data.rejectionReason || "অজ্ঞাত কারণে বাতিল করা হয়েছে।";
-    } else {
-        iconContainer.innerHTML = '<i class="fas fa-clock"></i>';
-        iconContainer.className = 'icon-pending';
-        statusText.innerText = 'Pending 🕘';
-        statusText.style.color = '#f1c40f';
-    }
-
-    modal.style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('receipt-modal').style.display = 'none';
-}
-
-function copyText(elementId) {
-    const text = document.getElementById(elementId).innerText;
-    navigator.clipboard.writeText(text);
-    alert("কপি করা হয়েছে: " + text);
-}
-
-// --- 6. Admin Panel Hooks (Placeholder) ---
-// ডিপোজিট ফাংশন (User Side)
-function submitDeposit() {
-    if(!isOfficeOpen()) {
-        alert("অফিস এখন বন্ধ! দয়া করে সকাল ৯টা থেকে রাত ৯:৩০ এর মধ্যে চেষ্টা করুন।");
-        return;
-    }
-    
-    const amount = document.getElementById('dep-amount').value;
-    const trx = document.getElementById('dep-trx').value;
-    
-    if(!amount || !trx) return alert("সব তথ্য পূরণ করুন!");
-
-    db.collection('transactions').add({
-        uid: auth.currentUser.uid,
-        type: 'deposit',
-        amount: parseInt(amount),
-        trxID: trx,
-        method: 'Nagad/Bkash', // এটা সিলেক্টেড মেথড থেকে নিবি
-        status: 'pending',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        alert("ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে! এডমিন চেক করে ব্যালেন্স এড করে দেবে।");
-        showContent('history-screen');
-    });
-}
-
-// Initialize Logic
-auth.onAuthStateChanged(user => {
-    if (user) {
-        document.getElementById('auth-section').style.display = 'none';
-        document.getElementById('app-section').style.display = 'block';
-        startLaunchTimer();
-        loadUserData();
-        loadHistory();
-    } else {
-        document.getElementById('auth-section').style.display = 'flex';
-        document.getElementById('app-section').style.display = 'none';
-    }
-});
