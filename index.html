@@ -7,26 +7,26 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        /* ==================== ১. মূল থিম ও মোবাইল রেসপনসিভ ফিক্স ==================== */
+        /* ==================== ১. প্রফেশনাল থিম ও রেসপনসিভ ভেরিয়েবল ==================== */
         :root {
             --primary-green: #00693e;
             --gradient: linear-gradient(180deg, #00693e 0%, #004d2c 100%);
-            --bg: #f4fdf4;
+            --secondary-bg: #f4fdf4;
             --white: #ffffff;
             --danger: #dc2626;
             --success: #059669;
-            --shadow: 0 10px 30px rgba(0, 105, 62, 0.08);
+            --card-shadow: 0 10px 25px rgba(0, 105, 62, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #333; height: 100vh; overflow: hidden; position: relative; }
+        body { background: var(--secondary-bg); color: #333; height: 100vh; overflow: hidden; position: relative; }
         
+        /* স্ক্রলবার হাইড করা */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
-        /* ==================== ২. সাইন-আপ ও লগইন ডিজাইন ==================== */
+        /* ==================== ২. সাইন-আপ ও ক্যাপচা ডিজাইন ==================== */
         #auth-section { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--gradient); z-index: 5000; display: flex; 
@@ -34,187 +34,168 @@
         }
         .auth-card { 
             background: var(--white); width: 100%; max-width: 400px; 
-            padding: 35px; border-radius: 30px; text-align: center; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: slideUp 0.6s ease;
+            padding: 30px; border-radius: 25px; text-align: center; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); animation: slideUp 0.5s ease;
         }
-        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #eee; border-radius: 15px; font-size: 16px; outline: none; background: #fafafa; }
-        .captcha-area { display: flex; align-items: center; justify-content: space-between; background: #f0f0f0; padding: 12px; border-radius: 15px; margin-bottom: 20px; }
-        #captcha-display { font-weight: bold; font-size: 22px; letter-spacing: 5px; color: var(--primary-green); }
-        .auth-btn { width: 100%; padding: 16px; background: var(--gradient); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .auth-input { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #eee; border-radius: 12px; font-size: 16px; outline: none; background: #fafafa; }
+        
+        .captcha-container { display: flex; align-items: center; justify-content: space-between; background: #f0f0f0; padding: 10px; border-radius: 12px; margin-bottom: 15px; }
+        #captcha-val { font-weight: bold; font-size: 22px; letter-spacing: 5px; color: var(--primary-green); }
 
-        /* ==================== ৩. প্রফেশনাল হেডার ও টাইমার ==================== */
+        /* ==================== ৩. অ্যাপ হেডার ও লঞ্চ টাইমার ==================== */
         .app-header { 
-            background: var(--gradient); padding: 25px 20px 85px 20px; 
-            border-bottom-left-radius: 45px; border-bottom-right-radius: 45px; 
-            color: white; position: relative; z-index: 100; box-shadow: 0 5px 30px rgba(0,0,0,0.15);
+            background: var(--gradient); padding: 20px 20px 75px 20px; 
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
+            color: white; position: relative; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .pfp { width: 55px; height: 55px; border-radius: 50%; border: 2px solid white; background: #eee; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .user-meta { display: flex; align-items: center; gap: 12px; }
+        .pfp-circle { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; background: #eee; }
 
         .balance-pill { 
-            background: rgba(255,255,255,0.15); backdrop-filter: blur(15px); 
-            padding: 12px 30px; border-radius: 50px; text-align: center; 
-            cursor: pointer; width: 220px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); 
+            padding: 10px 25px; border-radius: 50px; text-align: center; 
+            cursor: pointer; width: 200px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.3);
             transition: 0.3s;
         }
-        .balance-label { font-size: 14px; font-weight: 500; }
-        .balance-val { font-size: 22px; font-weight: 700; display: none; }
+        .bal-text { font-size: 14px; font-weight: 500; }
+        .bal-amount { font-size: 20px; font-weight: 700; display: none; }
 
-        .launch-bar { 
+        .launch-timer-bar { 
             position: absolute; bottom: 0; left: 0; width: 100%; 
-            background: rgba(0,0,0,0.1); text-align: center; font-size: 12px; padding: 8px; 
-            color: #fff; border-bottom-left-radius: 45px; border-bottom-right-radius: 45px; 
+            background: rgba(0,0,0,0.1); text-align: center; font-size: 11px; padding: 6px; 
+            color: #fff; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
         }
 
-        /* ==================== ৪. পেজ স্লাইডার (সাদা স্ক্রিন ফিক্সড) ==================== */
-        #page-container { position: relative; width: 100%; height: calc(100vh - 170px); overflow: hidden; }
-        .page { 
+        /* ==================== ৪. পেজ নেভিগেশন ও গ্রিড ==================== */
+        #page-wrapper { position: relative; width: 100%; height: calc(100vh - 160px); overflow: hidden; }
+        .page-item { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            padding: 0 25px 120px 25px; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            padding: 0 20px 100px 20px; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
             opacity: 0; transform: translateX(100%); pointer-events: none; overflow-y: auto;
         }
-        .page.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+        .page-item.active { opacity: 1; transform: translateX(0); pointer-events: all; }
 
-        /* ৫. মেইন গ্রিড বাটন (৮টি বাটন) */
-        .main-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: -45px; position: relative; z-index: 200; }
-        .grid-item { background: var(--white); border-radius: 22px; padding: 20px 5px; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: 0.2s; }
-        .grid-item i { font-size: 26px; margin-bottom: 8px; display: block; }
-        .grid-item span { font-size: 11px; font-weight: 700; color: #444; }
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: -40px; position: relative; z-index: 200; }
+        .grid-box { background: var(--white); border-radius: 20px; padding: 18px 5px; text-align: center; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s; }
+        .grid-box:active { transform: scale(0.95); }
+        .grid-box i { font-size: 24px; margin-bottom: 6px; display: block; }
+        .grid-box span { font-size: 11px; font-weight: 700; color: #444; }
 
-        /* ৬. ক্যাটাগরি-২ সার্ভিস */
-        .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
-        .service-item { background: var(--white); border-radius: 20px; padding: 20px 10px; text-align: center; border: 1px solid #f0f0f0; cursor: pointer; }
-        .service-item img { width: 40px; height: 40px; margin-bottom: 8px; }
+        /* ৫. ক্যাটাগরি-২ সার্ভিস গ্রিড */
+        .service-list { margin-top: 30px; }
+        .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .service-card { background: var(--white); border-radius: 18px; padding: 15px 10px; text-align: center; border: 1px solid #eee; cursor: pointer; }
+        .service-card img { width: 35px; height: 35px; margin-bottom: 5px; }
 
-        /* ৭. রিসিট ও মডাল */
-        .modal-overlay { 
+        /* ==================== ৬. ট্রানজেকশন রিসিট ও মডাল ==================== */
+        .modal-bg { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.65); z-index: 6000; display: none; 
-            justify-content: center; align-items: center; backdrop-filter: blur(6px);
+            background: rgba(0,0,0,0.6); z-index: 6000; display: none; 
+            justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
-        .receipt-card { background: var(--white); width: 92%; max-width: 400px; padding: 35px; border-radius: 30px; text-align: center; animation: popIn 0.3s; }
-        .receipt-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px dashed #eee; font-size: 15px; }
+        .receipt-container { background: var(--white); width: 92%; max-width: 380px; padding: 30px; border-radius: 25px; text-align: center; animation: popUp 0.3s; }
+        .receipt-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #ddd; font-size: 14px; }
 
-        /* ৮. বটম নেভিগেশন */
-        .bottom-nav { 
+        /* ==================== ৭. বটম নেভিগেশন ==================== */
+        .bottom-navbar { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: var(--white); display: flex; justify-content: space-around; 
-            padding: 18px 0; border-top-left-radius: 35px; border-top-right-radius: 35px; 
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.06); z-index: 1000;
+            padding: 15px 0; border-top-left-radius: 30px; border-top-right-radius: 30px; 
+            box-shadow: 0 -8px 25px rgba(0,0,0,0.05); z-index: 1000;
         }
-        .nav-link { text-align: center; color: #ccc; cursor: pointer; width: 25%; transition: 0.3s; }
-        .nav-link.active { color: var(--primary-green); font-weight: 700; }
-        .nav-link i { font-size: 24px; margin-bottom: 5px; display: block; }
+        .nav-link { text-align: center; color: #bbb; cursor: pointer; width: 25%; transition: 0.3s; }
+        .nav-link.active { color: var(--primary-green); font-weight: bold; }
+        .nav-link i { font-size: 22px; margin-bottom: 4px; display: block; }
 
-        @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div id="auth-section">
-        <div class="auth-card" id="signup-form">
-            <h2 style="color:var(--primary-green); margin-bottom:10px;">অ্যাকাউন্ট খুলুন</h2>
+        <div class="auth-card" id="signup-box">
+            <h2 style="color:var(--primary-green); margin-bottom:15px;">টাকার গাছে স্বাগতম</h2>
             <input type="text" id="reg-name" class="auth-input" placeholder="আপনার নাম">
-            <input type="number" id="reg-phone" class="auth-input" placeholder="মোবাইল নম্বর">
+            <input type="number" id="reg-phone" class="auth-input" placeholder="১১ ডিজিট মোবাইল নম্বর">
             <input type="email" id="reg-email" class="auth-input" placeholder="ইমেইল অ্যাড্রেস">
             <input type="password" id="reg-pass" class="auth-input" placeholder="পাসওয়ার্ড (৬+ অক্ষর)">
-            <div class="captcha-area">
-                <span id="captcha-display">0000</span>
-                <input type="number" id="captcha-input" style="width:100px; padding:8px; border-radius:10px;" placeholder="কোড">
+            
+            <div class="captcha-container">
+                <span id="captcha-val">0000</span>
+                <input type="number" id="captcha-in" style="width:100px; padding:8px; border-radius:8px; border:1px solid #ddd;" placeholder="কোড">
             </div>
-            <button class="auth-btn" onclick="handleSignup()">সাইন আপ করুন</button>
+            
+            <button class="auth-btn" style="width:100%; padding:15px; background:var(--gradient); color:white; border:none; border-radius:12px; font-weight:bold;" onclick="handleSignup()">অ্যাকাউন্ট খুলুন</button>
             <p style="margin-top:15px; font-size:14px;">অ্যাকাউন্ট আছে? <span style="color:var(--primary-green); font-weight:bold; cursor:pointer;" onclick="toggleAuth('login')">লগইন</span></p>
-        </div>
-
-        <div class="auth-card" id="login-form" style="display:none;">
-            <h2 style="color:var(--primary-green); margin-bottom:10px;">লগইন করুন</h2>
-            <input type="email" id="log-email" class="auth-input" placeholder="ইমেইল অ্যাড্রেস">
-            <input type="password" id="log-pass" class="auth-input" placeholder="পাসওয়ার্ড">
-            <button class="auth-btn" onclick="handleLogin()">লগইন</button>
-            <p style="margin-top:15px; font-size:14px;">ইউজার নেই? <span style="color:var(--primary-green); font-weight:bold; cursor:pointer;" onclick="toggleAuth('signup')">সাইন আপ</span></p>
         </div>
     </div>
 
-    <div id="app-ui" style="display:none;">
+    <div id="app-main" style="display:none;">
         <header class="app-header">
             <div class="header-top">
-                <div class="user-info">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="pfp">
+                <div class="user-meta">
+                    <img id="u-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="pfp-circle">
                     <div>
-                        <h4 id="user-head-name">Loading...</h4>
-                        <span id="user-head-phone" style="font-size:12px; opacity:0.8;">017XXXXXXXX</span>
+                        <h4 id="u-name-head">Loading...</h4>
+                        <span id="u-phone-head" style="font-size:12px; opacity:0.8;">017XXXXXXXX</span>
                     </div>
                 </div>
-                <div onclick="alert('নতুন কোনো নোটিশ নেই!')"><i class="far fa-bell" style="font-size:26px;"></i></div>
+                <div onclick="alert('নতুন কোনো নোটিশ নেই!')"><i class="far fa-bell" style="font-size:24px;"></i></div>
             </div>
-            <div class="balance-pill" onclick="revealBalance()">
-                <span id="bal-label" class="balance-label">ব্যালেন্স দেখুন</span>
-                <span id="bal-value" class="balance-val">৳ 0.00</span>
+            <div class="balance-pill" onclick="toggleBalance()">
+                <span id="bal-lab" class="bal-text">ব্যালেন্স দেখুন</span>
+                <span id="bal-val" class="bal-amount">৳ 0.00</span>
             </div>
-            <div class="launch-bar" id="launch-timer">বট লঞ্চ: ০ দিন ০ ঘণ্টা ০ মিনিট</div>
+            <div class="launch-timer-bar" id="bot-timer">বট লঞ্চ: ০ দিন ০ ঘণ্টা ০ মিনিট</div>
         </header>
 
-        <div id="page-container">
-            <div id="home-page" class="page active">
-                <div class="main-grid">
-                    <div class="grid-item" onclick="goToPage('vip-page')"><i class="fas fa-crown" style="color:#f59e0b;"></i><span>ভিআইপি</span></div>
-                    <div class="grid-item" onclick="goToPage('task-page')"><i class="fas fa-tasks" style="color:#2563eb;"></i><span>কাজ</span></div>
-                    <div class="grid-item" onclick="goToPage('withdraw-page')"><i class="fas fa-wallet" style="color:#dc2626;"></i><span>ক্যাশআউট</span></div>
-                    <div class="grid-item" onclick="goToPage('deposit-page')"><i class="fas fa-plus-circle" style="color:#059669;"></i><span>ডিপোজিট</span></div>
-                    <div class="grid-item" onclick="goToPage('history-page')"><i class="fas fa-history" style="color:#8b5cf6;"></i><span>হিস্টরি</span></div>
-                    <div class="grid-item" onclick="openSupport()"><i class="fab fa-telegram" style="color:#0ea5e9;"></i><span>সাপোর্ট</span></div>
-                    <div class="grid-item" onclick="goToPage('rules-page')"><i class="fas fa-scroll" style="color:#6b7280;"></i><span>নিয়মাবলী</span></div>
-                    <div class="grid-item" onclick="alert('রেফার লিংক কপি হয়েছে!')"><i class="fas fa-share-alt" style="color:#ec4899;"></i><span>শেয়ার</span></div>
+        <div id="page-wrapper">
+            <div id="home-page" class="page-item active">
+                <div class="action-grid">
+                    <div class="grid-box" onclick="goToPage('vip-page')"><i class="fas fa-crown" style="color:#f59e0b;"></i><span>ভিআইপি</span></div>
+                    <div class="grid-box" onclick="goToPage('task-page')"><i class="fas fa-tasks" style="color:#2563eb;"></i><span>কাজ</span></div>
+                    <div class="grid-box" onclick="goToPage('withdraw-page')"><i class="fas fa-wallet" style="color:#dc2626;"></i><span>ক্যাশআউট</span></div>
+                    <div class="grid-box" onclick="goToPage('deposit-page')"><i class="fas fa-plus-circle" style="color:#059669;"></i><span>ডিপোজিট</span></div>
+                    <div class="grid-box" onclick="goToPage('history-page')"><i class="fas fa-history" style="color:#8b5cf6;"></i><span>হিস্টরি</span></div>
+                    <div class="grid-card" onclick="openSupport()"><i class="fab fa-telegram" style="color:#0ea5e9;"></i><span>সাপোর্ট</span></div>
+                    <div class="grid-box" onclick="goToPage('rules-page')"><i class="fas fa-scroll" style="color:#6b7280;"></i><span>নিয়মাবলী</span></div>
+                    <div class="grid-box" onclick="alert('লিংক কপি হয়েছে!')"><i class="fas fa-share-alt" style="color:#ec4899;"></i><span>শেয়ার</span></div>
                 </div>
 
-                <div class="service-grid">
-                    <div class="service-item" onclick="alert('বোনাস সফল!')"><img src="https://cdn-icons-png.flaticon.com/512/2662/2662503.png"><br><span>ডেইলি বোনাস</span></div>
-                    <div class="service-item" onclick="alert('শীঘ্রই আসছে')"><img src="https://cdn-icons-png.flaticon.com/512/1603/1603847.png"><br><span>সেরা ১০</span></div>
-                    <div class="service-item" onclick="alert('শীঘ্রই আসছে')"><img src="https://cdn-icons-png.flaticon.com/512/2534/2534204.png"><br><span>রিচার্জ</span></div>
+                <div class="service-list">
+                    <div class="service-grid">
+                        <div class="service-card" onclick="claimDailyBonus()"><img src="https://cdn-icons-png.flaticon.com/512/2662/2662503.png"><br><span>ডেইলি বোনাস</span></div>
+                        <div class="service-card" onclick="alert('শীঘ্রই আসছে!')"><img src="https://cdn-icons-png.flaticon.com/512/1603/1603847.png"><br><span>সেরা ১০</span></div>
+                        <div class="service-card" onclick="alert('শীঘ্রই আসছে!')"><img src="https://cdn-icons-png.flaticon.com/512/2534/2534204.png"><br><span>রিচার্জ</span></div>
+                    </div>
                 </div>
             </div>
 
-            <div id="rules-page" class="page">
-                <h3 style="margin-bottom:20px; color:var(--primary-green);">অ্যাপ ব্যবহারের নিয়মাবলী</h3>
-                <div style="background:white; padding:25px; border-radius:25px; line-height:1.7; font-size:15px; box-shadow:var(--shadow);">
-                    <p>১. একটি ডিভাইসে একাধিক অ্যাকাউন্ট ব্যবহার করা নিষিদ্ধ।</p>
-                    <p>২. ডিপোজিট বা উইথড্র করার সময় অবশ্যই সঠিক তথ্য দিতে হবে।</p>
-                    <p>৩. কাজের ক্ষেত্রে সঠিক স্ক্রিনশট প্রুফ হিসেবে আপলোড করতে হবে।</p>
-                    <p>৪. অফিস সময়: সকাল ৯টা থেকে রাত ৯:৩০ পর্যন্ত।</p>
-                    <p>৫. পেমেন্ট সাধারণত ১ থেকে ১২ ঘণ্টার মধ্যে সম্পন্ন হয়।</p>
-                </div>
-                <button class="auth-btn" style="margin-top:20px;" onclick="goHome()">হোমে ফিরে যান</button>
+            <div id="task-page" class="page-item">
+                <h3 style="color:var(--primary-green); margin-bottom:15px;">কাজের তালিকা</h3>
+                <div id="task-list-container"></div>
             </div>
             
-            <div id="profile-page" class="page">
-                <h3 style="margin-bottom:20px; color:var(--primary-green);">প্রোফাইল আপডেট</h3>
-                <div style="background:white; padding:25px; border-radius:25px; box-shadow:var(--shadow);">
-                    <label style="font-size:13px; color:#777;">নাম পরিবর্তন</label>
-                    <input type="text" id="edit-name" class="auth-input">
-                    <label style="font-size:13px; color:#777;">মোবাইল নম্বর</label>
-                    <input type="number" id="edit-phone" class="auth-input">
-                    <button class="auth-btn" onclick="updateProfile()">তথ্য আপডেট করুন</button>
-                    <button class="auth-btn" style="background:#f1f1f1; color:#333; margin-top:15px; box-shadow:none;" onclick="auth.signOut()">লগআউট</button>
+            <div id="deposit-page" class="page-item">
+                <h3 style="color:var(--primary-green); margin-bottom:15px;">ডিপোজিট করুন</h3>
                 </div>
-            </div>
         </div>
 
-        <nav class="bottom-nav">
+        <nav class="bottom-navbar">
             <div class="nav-link active" onclick="goHome()"><i class="fas fa-home"></i><span>হোম</span></div>
             <div class="nav-link" onclick="goToPage('task-page')"><i class="fas fa-list-check"></i><span>কাজ</span></div>
-            <div class="nav-item" style="width:25%"></div> <div class="nav-link" onclick="goToPage('history-page')"><i class="fas fa-history"></i><span>লেনদেন</span></div>
+            <div class="nav-link" onclick="goToPage('history-page')"><i class="fas fa-history"></i><span>লেনদেন</span></div>
             <div class="nav-link" onclick="goToPage('profile-page')"><i class="fas fa-user-circle"></i><span>প্রোফাইল</span></div>
         </nav>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // ফায়ারবেস কনফিগারেশন
+        // ==================== ১. ফায়ারবেস কনফিগারেশন ও ইনিশিয়ালাইজেশন ====================
         const firebaseConfig = {
             apiKey: "AIzaSyDSyIjbEj8F8ipbs2wEmaKKTt9OThpX2AM",
             authDomain: "takar-gash.firebaseapp.com",
@@ -223,122 +204,407 @@
             messagingSenderId: "796583669978",
             appId: "1:796583669978:web:9dbd8680e1a98dba30b5e3"
         };
-        firebase.initializeApp(firebaseConfig);
+        
+        // কনফিগারেশন এরর ফিক্স
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // ১. অথেন্টিকেশন ও রিয়েল-টাইম ডাটা
+        // গ্লোবাল ভেরিয়েবল
+        let currentUserData = null;
+        let selectedDepMethod = 'bkash';
+        const BKASH_NUM = "01340975230"; // তোর দেওয়া অরিজিনাল বিকাশ
+        const NAGAD_NUM = "01836319726"; // তোর দেওয়া অরিজিনাল নগদ
+
+        // ==================== ২. রিয়েল-টাইম অথেন্টিকেশন ও ডাটা সিঙ্ক ====================
         auth.onAuthStateChanged(user => {
-            if(user) {
+            if (user) {
+                // ইউজার লগইন থাকলে ডাটাবেস থেকে তথ্য আনা
                 db.collection('users').doc(user.uid).onSnapshot(doc => {
-                    if(doc.exists) {
-                        const data = doc.data();
-                        document.getElementById('user-head-name').innerText = data.name;
-                        document.getElementById('user-head-phone').innerText = data.phone;
-                        document.getElementById('bal-value').innerText = "৳ " + (data.balance || 0).toFixed(2);
-                        document.getElementById('edit-name').value = data.name;
-                        document.getElementById('edit-phone').value = data.phone;
-                        
-                        document.getElementById('auth-section').style.display = 'none';
-                        document.getElementById('app-ui').style.display = 'block';
+                    if (doc.exists) {
+                        currentUserData = doc.data();
+                        updateUI(currentUserData);
+                        hideAuthAndShowApp();
                     } else {
-                        // নতুন ইউজার ডাটাবেস এন্ট্রি
-                        db.collection('users').doc(user.uid).set({
-                            name: "New User", phone: "017XXXXXXXX", balance: 0, joinedAt: new Date()
-                        });
+                        createInitialUserData(user);
                     }
                 });
             } else {
-                document.getElementById('auth-section').style.display = 'flex';
-                document.getElementById('app-ui').style.display = 'none';
+                showAuthSection();
             }
         });
 
-        // ২. নম্বর ক্যাপচা জেনারেটর
-        function genCaptcha() {
+        function updateUI(data) {
+            document.getElementById('u-name-head').innerText = data.name || "ইউজার";
+            document.getElementById('u-phone-head').innerText = data.phone || "017XXXXXXXX";
+            document.getElementById('bal-val').innerText = "৳ " + (data.balance || 0).toFixed(2);
+        }
+
+        // ==================== ৩. নম্বর ক্যাপচা জেনারেটর ও সাইন-আপ লজিক ====================
+        function generateCaptcha() {
             const code = Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('captcha-display').innerText = code;
+            document.getElementById('captcha-val').innerText = code;
         }
-        genCaptcha();
+        generateCaptcha(); // পেজ লোড হলে ক্যাপচা তৈরি
 
-        // ৩. পেজ নেভিগেশন (সাদা স্ক্রিন ফিক্সড)
-        function goToPage(id) {
-            const target = document.getElementById(id);
-            if(!target) return alert("এই পেজটি শীঘ্রই আসছে!");
-            
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            target.classList.add('active');
-            
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            if(id === 'home-page') document.querySelectorAll('.nav-link')[0].classList.add('active');
-            if(id === 'profile-page') document.querySelectorAll('.nav-link')[4].classList.add('active');
-        }
-
-        function goHome() { goToPage('home-page'); }
-
-        // ৪. ব্যালেন্স ও টাইমার লজিক
-        function revealBalance() {
-            document.getElementById('bal-label').style.display = 'none';
-            document.getElementById('bal-value').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('bal-label').style.display = 'block';
-                document.getElementById('bal-value').style.display = 'none';
-            }, 3000);
-        }
-
-        setInterval(() => {
-            const start = new Date("2025-12-15T10:00:00").getTime();
-            const now = new Date().getTime();
-            const diff = now - start;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById('launch-timer').innerText = `বট লঞ্চ: ${days} দিন ${hours} ঘণ্টা ${mins} মিনিট`;
-        }, 60000);
-
-        // ৫. সাপোর্ট লিঙ্ক হ্যান্ডলার
-        function openSupport() {
-            window.open("https://t.me/TAKAR_GACH_ADMIN", "_blank");
-        }
-
-        // ৬. সাইন-আপ ও লগইন
         async function handleSignup() {
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
             const name = document.getElementById('reg-name').value;
             const phone = document.getElementById('reg-phone').value;
-            const capIn = document.getElementById('captcha-input').value;
-            const capShow = document.getElementById('captcha-display').innerText;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const capInput = document.getElementById('captcha-in').value;
+            const capCode = document.getElementById('captcha-val').innerText;
 
-            if(capIn !== capShow) return alert("ক্যাপচা ভুল হয়েছে মামা!");
-            if(!email || pass.length < 6) return alert("সঠিক তথ্য দিন!");
+            // ভ্যালিডেশন চেক
+            if (capInput !== capCode) return alert("মামা, নম্বর ক্যাপচা ভুল হয়েছে!");
+            if (!name || phone.length < 11 || !email || pass.length < 6) {
+                return alert("দয়া করে সব তথ্য সঠিকভাবে দিন (পাসওয়ার্ড অন্তত ৬ অক্ষরের)!");
+            }
 
             try {
                 const cred = await auth.createUserWithEmailAndPassword(email, pass);
                 await db.collection('users').doc(cred.user.uid).set({
-                    name: name, phone: phone, balance: 0, joinedAt: new Date()
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    balance: 0,
+                    vipStatus: 'free',
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                alert("স্বাগতম মামা! অ্যাকাউন্ট তৈরি হয়েছে। ✅");
-            } catch (e) { alert("ভুল: " + e.message); }
+                alert("স্বাগতম মামা! টাকার গাছে আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।");
+            } catch (error) {
+                alert("ভুল হয়েছে: " + error.message);
+            }
         }
 
-        function handleLogin() {
-            const email = document.getElementById('log-email').value;
-            const pass = document.getElementById('log-pass').value;
-            auth.signInWithEmailAndPassword(email, pass).catch(e => alert("লগইন ব্যর্থ: " + e.message));
+        // ==================== ৪. অফিস টাইম ও লঞ্চ টাইমার লজিক ====================
+        function isOfficeOpen() {
+            const now = new Date();
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const currentTime = hour + min / 60;
+            return currentTime >= 9 && currentTime <= 21.5; // সকাল ৯টা - রাত ৯:৩০
         }
 
-        function toggleAuth(type) {
-            document.getElementById('signup-form').style.display = type === 'signup' ? 'block' : 'none';
-            document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
+        setInterval(() => {
+            const start = new Date("2025-12-15T10:00:00").getTime(); // বট লঞ্চ
+            const now = new Date().getTime();
+            const diff = now - start;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            document.getElementById('bot-timer').innerText = `বট লঞ্চ: ${days} দিন ${hours} ঘণ্টা ${mins} মিনিট`;
+        }, 60000);
+
+        // ==================== ৫. পেজ নেভিগেশন ও ব্যালেন্স রিভিল ====================
+        function goToPage(pageId) {
+            document.querySelectorAll('.page-item').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById(pageId);
+            if (target) {
+                target.classList.add('active');
+            } else {
+                alert("এই সেকশনটি বর্তমানে আপডেট করা হচ্ছে!");
+            }
+            
+            // বটম নেভিগেশন হাইলাইট আপডেট
+            updateNavHighlight(pageId);
         }
 
-        function updateProfile() {
-            const n = document.getElementById('edit-name').value;
-            const p = document.getElementById('edit-phone').value;
-            db.collection('users').doc(auth.currentUser.uid).update({ name: n, phone: p })
-                .then(() => alert("প্রোফাইল আপডেট হয়েছে! ✅"));
+        function goHome() { goToPage('home-page'); }
+
+        function toggleBalance() {
+            const label = document.getElementById('bal-lab');
+            const val = document.getElementById('bal-val');
+            label.style.display = 'none';
+            val.style.display = 'block';
+            setTimeout(() => {
+                label.style.display = 'block';
+                val.style.display = 'none';
+            }, 3000);
+        }
+
+        // ==================== ৬. সাপোর্ট ও শেয়ার লজিক ====================
+        function openSupport() {
+            // তোর দেওয়া অরিজিনাল সাপোর্ট লিঙ্ক
+            window.open("https://t.me/TAKAR_GACH_V27", "_blank");
+        }
+
+        // ==================== ৭. ডিপোজিট ও লেনদেন লজিক ====================
+        async function submitDeposit() {
+            if (!isOfficeOpen()) return alert("দুঃখিত মামা, অফিস এখন বন্ধ! (সকাল ৯টা - রাত ৯:৩০)");
+            
+            const amt = Number(document.getElementById('dep-amt').value);
+            const trx = document.getElementById('dep-trx').value;
+            
+            if (amt < 100) return alert("মিনিমাম ডিপোজিট ১০০ টাকা!");
+            if (!trx) return alert("ট্রানজেকশন আইডি দিন!");
+
+            try {
+                await db.collection('transactions').add({
+                    uid: auth.currentUser.uid,
+                    type: 'deposit',
+                    amount: amt,
+                    trxID: trx,
+                    method: selectedDepMethod,
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে! এডমিন চেক করে আপনার ব্যালেন্স অ্যাড করে দিবে।");
+                goHome();
+            } catch (e) { alert("সমস্যা হয়েছে, আবার চেষ্টা করুন।"); }
+        }
+
+        // হেল্পার ফাংশনসমূহ
+        function hideAuthAndShowApp() {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('app-main').style.display = 'block';
+        }
+
+        function showAuthSection() {
+            document.getElementById('auth-section').style.display = 'flex';
+            document.getElementById('app-main').style.display = 'none';
+        }
+
+        function toggleAuth(view) {
+            // লগইন ভিউ বর্তমানে হিডেন আছে, তুই চাইলে অ্যাড করতে পারিস
+            alert("লগইন সিস্টেম পার্ট ৩-এ বিস্তারিত আসবে!");
         }
     </script>
-</body>
-</html>
+            <div id="deposit-page" class="page-item">
+                <h3 style="color:var(--primary-green); margin-bottom:15px;"><i class="fas fa-plus-circle"></i> ডিপোজিট করুন</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
+                    <div class="method-card active" id="meth-bkash" onclick="selectMethod('bkash', '01340975230')">
+                        <img src="https://freelogopng.com/images/all_img/1656234745bkash-app-logo-png.png" style="width:50px;"><br><span>বিকাশ</span>
+                    </div>
+                    <div class="method-card" id="meth-nagad" onclick="selectMethod('nagad', '01836319726')">
+                        <img src="https://freelogopng.com/images/all_img/1679248787Nagad-Logo.png" style="width:50px;"><br><span>নগদ</span>
+                    </div>
+                </div>
+                <div style="background:#e6f4ea; padding:20px; border-radius:20px; text-align:center; border:1px solid #c3e6cb; margin-bottom:20px;">
+                    <span id="meth-label" style="font-size:14px; color:#155724;">বিকাশ (Personal) নম্বর:</span><br>
+                    <b id="display-num" style="font-size:22px; color:var(--primary-green);">01340975230</b>
+                    <button onclick="copyToClipboard()" style="display:block; margin:10px auto 0; background:var(--primary-green); color:white; border:none; padding:8px 20px; border-radius:10px; font-weight:bold;">COPY NUMBER</button>
+                </div>
+
+                <div class="input-group">
+                    <label style="font-size:13px; font-weight:bold; color:#666;">টাকার পরিমাণ (মিনিমাম ১০০৳)</label>
+                    <input type="number" id="dep-amt" class="auth-input" placeholder="0.00">
+                    <label style="font-size:13px; font-weight:bold; color:#666;">ট্রানজেকশন আইডি (TrxID)</label>
+                    <input type="text" id="dep-trx" class="auth-input" placeholder="8N7X2M...">
+                </div>
+                <button class="auth-btn" onclick="submitDeposit()">পেমেন্ট নিশ্চিত করুন</button>
+            </div>
+
+            <div id="withdraw-page" class="page-item">
+                <h3 style="color:var(--danger); margin-bottom:15px;"><i class="fas fa-wallet"></i> ক্যাশআউট করুন</h3>
+                <div style="background:white; padding:20px; border-radius:25px; box-shadow:var(--card-shadow);">
+                    <label style="font-size:13px; font-weight:bold;">উইথড্র মেথড সিলেক্ট করুন</label>
+                    <select id="with-method" class="auth-input" style="background:#fff;">
+                        <option value="bkash">বিকাশ (Personal)</option>
+                        <option value="nagad">নগদ (Personal)</option>
+                    </select>
+                    <label style="font-size:13px; font-weight:bold;">পরিমাণ (মিনিমাম ৫০৳)</label>
+                    <input type="number" id="with-amt" class="auth-input" placeholder="0.00">
+                    <label style="font-size:13px; font-weight:bold;">আপনার নম্বর</label>
+                    <input type="number" id="with-phone" class="auth-input" placeholder="01XXXXXXXXX">
+                    <button class="auth-btn" style="background:var(--danger);" onclick="submitWithdraw()">রিকোয়েস্ট পাঠান</button>
+                </div>
+            </div>
+
+            <div id="task-page" class="page-item">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3 style="color:var(--primary-green);"><i class="fas fa-list-check"></i> কাজের তালিকা</h3>
+                    <span style="background:#fff; padding:5px 12px; border-radius:10px; font-size:12px; font-weight:bold; border:1px solid #eee;">টুডে: ৩/১০</span>
+                </div>
+                
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button class="auth-btn" style="flex:1; font-size:14px; padding:10px;" onclick="showTaskTab('free')">ফ্রি টাস্ক</button>
+                    <button class="auth-btn" style="flex:1; font-size:14px; padding:10px; background:#f59e0b;" onclick="showTaskTab('vip')">ভিআইপি টাস্ক</button>
+                </div>
+
+                <div id="task-container" style="display:grid; gap:15px;">
+                    <div style="text-align:center; padding:50px 0; color:#aaa;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:30px;"></i><br>কাজ লোড হচ্ছে...
+                    </div>
+                </div>
+            </div>
+
+            <div id="history-page" class="page-item">
+                <h3 style="color:var(--primary-green); margin-bottom:15px;"><i class="fas fa-history"></i> লেনদেন হিস্টরি</h3>
+                <div id="history-list" style="display:grid; gap:12px;">
+                    </div>
+            </div>
+
+            <div id="profile-page" class="page-item">
+                <div style="text-align:center; margin-bottom:25px;">
+                    <div style="position:relative; width:100px; height:100px; margin:0 auto 15px;">
+                        <img id="profile-pfp" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width:100%; height:100%; border-radius:50%; border:4px solid white; box-shadow:var(--card-shadow);">
+                        <div style="position:absolute; bottom:5px; right:5px; background:var(--primary-green); color:white; width:25px; height:25px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:12px;"><i class="fas fa-camera"></i></div>
+                    </div>
+                    <h2 id="p-name">Loading...</h2>
+                    <span id="p-phone" style="color:#666;">017XXXXXXXX</span>
+                </div>
+
+                <div style="background:white; padding:25px; border-radius:25px; box-shadow:var(--card-shadow);">
+                    <h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">ব্যক্তিগত তথ্য এডিট</h4>
+                    <label style="font-size:12px; color:#888;">পুরো নাম</label>
+                    <input type="text" id="edit-name" class="auth-input">
+                    <label style="font-size:12px; color:#888;">মোবাইল নম্বর</label>
+                    <input type="number" id="edit-phone" class="auth-input">
+                    <button class="auth-btn" onclick="updateProfile()">তথ্য সেভ করুন</button>
+                    <button class="auth-btn" style="background:#fee2e2; color:#dc2626; margin-top:15px; box-shadow:none;" onclick="handleLogout()">লগআউট</button>
+                </div>
+            </div>
+
+    <div class="modal-overlay" id="receipt-modal">
+        <div class="receipt-card">
+            <div id="receipt-icon" style="font-size:60px; margin-bottom:15px; color:var(--success);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 id="receipt-title" style="margin-bottom:20px;">লেনদেন সফল</h2>
+            
+            <div style="background:#f9f9f9; padding:15px; border-radius:15px;">
+                <div class="receipt-row"><span>টাইপ</span><b id="r-type">Withdraw</b></div>
+                <div class="receipt-row"><span>পরিমাণ</span><b id="r-amount">৳ 500.00</b></div>
+                <div class="receipt-row"><span>নম্বর</span><b id="r-phone">017XXXXXXXX</b></div>
+                <div class="receipt-row"><span>তারিখ</span><b id="r-date">২৫ ডিসে, ২০২৫</b></div>
+                <div class="receipt-row" style="border:none;"><span>স্ট্যাটাস</span><b id="r-status" style="color:var(--success);">SUCCESS</b></div>
+            </div>
+
+            <div id="reject-reason-box" style="display:none; background:#fee2e2; color:#b91c1c; padding:12px; border-radius:12px; margin-top:15px; font-size:13px; text-align:left;">
+                <strong>রিজেক্ট হওয়ার কারণ:</strong> <span id="r-reason">সঠিক তথ্য দেননি।</span>
+            </div>
+
+            <button class="auth-btn" style="margin-top:25px; background:#eee; color:#333; box-shadow:none;" onclick="closeReceipt()">বন্ধ করুন</button>
+        </div>
+    </div>
+// ==================== ১. মেথড সিলেকশন ও কপি লজিক ====================
+function selectMethod(method, num) {
+    selectedDepMethod = method;
+    currentDepNum = num; // অরিজিনাল বিকাশ ও নগদ নম্বর আপডেট হবে
+    
+    // UI আপডেট (বর্ডার হাইলাইট)
+    document.querySelectorAll('.method-card').forEach(m => m.classList.remove('active'));
+    document.getElementById(`meth-${method}`).classList.add('active');
+    
+    document.getElementById('meth-label').innerText = `${method.toUpperCase()} (Personal) নম্বর:`;
+    document.getElementById('display-num').innerText = num;
+}
+
+function copyToClipboard() {
+    const num = document.getElementById('display-num').innerText;
+    navigator.clipboard.writeText(num).then(() => {
+        alert("নম্বর কপি হয়েছে! এবার আপনার অ্যাপ থেকে টাকা পাঠিয়ে TrxID দিন।");
+    });
+}
+
+// ==================== ২. ক্যাশআউট/উইথড্র লজিক ====================
+async function submitWithdraw() {
+    if(!isOfficeOpen()) return alert("অফিস এখন বন্ধ! (সকাল ৯টা - রাত ৯:৩০)");
+    
+    const amt = Number(document.getElementById('with-amt').value);
+    const method = document.getElementById('with-method').value;
+    const phone = document.getElementById('with-phone').value;
+
+    if(amt < 50) return alert("মিনিমাম উইথড্র ৫০ টাকা!");
+    if(realBalance < amt) return alert("আপনার ব্যালেন্সে পর্যাপ্ত টাকা নেই!");
+    if(phone.length < 11) return alert("সঠিক মোবাইল নম্বর দিন!");
+
+    try {
+        // ব্যালেন্স চেক ও ডিডাকশন (নিরাপদ ট্রানজেকশন)
+        await db.runTransaction(async (transaction) => {
+            const userRef = db.collection('users').doc(auth.currentUser.uid);
+            transaction.update(userRef, { balance: realBalance - amt });
+            
+            const transRef = db.collection('transactions').doc();
+            transaction.set(transRef, {
+                uid: auth.currentUser.uid,
+                type: 'withdraw',
+                amount: amt,
+                method: method,
+                phone: phone,
+                status: 'pending',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        alert("উইথড্র রিকোয়েস্ট সফল! ১২ ঘণ্টার মধ্যে পেমেন্ট পাবেন। ✅");
+        goHome();
+    } catch (e) { alert("উইথড্র ব্যর্থ হয়েছে, আবার চেষ্টা করুন।"); }
+}
+
+// ==================== ৩. ডাইনামিক টাস্ক ফিল্টার (Free vs VIP) ====================
+function showTaskTab(tabType) {
+    const container = document.getElementById('task-container');
+    container.innerHTML = '<div style="text-align:center;">কাজ খোঁজা হচ্ছে...</div>';
+    
+    // অ্যাডমিন প্যানেল থেকে যেভাবে ভিআইপি সেট করবি
+    db.collection('tasks').where('category', '==', tabType).limit(10).get().then(snap => {
+        container.innerHTML = '';
+        if(snap.empty) {
+            container.innerHTML = `<div style="text-align:center; padding:20px; color:#666;">বর্তমানে কোনো ${tabType} কাজ নেই।</div>`;
+            return;
+        }
+        
+        snap.forEach(doc => {
+            const task = doc.data();
+            const html = `
+                <div style="background:white; padding:15px; border-radius:18px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--card-shadow);">
+                    <div>
+                        <h5 style="margin:0;">${task.title}</h5>
+                        <small style="color:var(--success); font-weight:bold;">পুরস্কার: ৳${task.reward}</small>
+                    </div>
+                    <button onclick="doTask('${task.link}', '${doc.id}')" style="background:var(--primary-green); color:white; border:none; padding:8px 15px; border-radius:10px; font-size:12px;">শুরু করুন</button>
+                </div>`;
+            container.innerHTML += html;
+        });
+    });
+}
+
+// ==================== ৪. হিস্টরি ও রিসিট পপ-আপ লজিক ====================
+function loadTransactionHistory() {
+    const list = document.getElementById('history-list');
+    db.collection('transactions').where('uid', '==', auth.currentUser.uid)
+        .orderBy('createdAt', 'desc').limit(15).onSnapshot(snap => {
+            list.innerHTML = '';
+            snap.forEach(doc => {
+                const data = doc.data();
+                const statusColor = data.status === 'success' ? 'var(--success)' : (data.status === 'rejected' ? 'var(--danger)' : '#f59e0b');
+                const html = `
+                    <div onclick='openReceipt(${JSON.stringify(data)})' style="background:white; padding:15px; border-radius:18px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <i class="fas ${data.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'}" style="color:${statusColor}"></i>
+                            <div><h5 style="margin:0;">${data.type === 'deposit' ? 'জমা' : 'উত্তোলন'}</h5><small>${data.method}</small></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <h5 style="margin:0; color:${statusColor}">${data.type === 'deposit' ? '+' : '-'}৳${data.amount}</h5>
+                            <small style="font-size:10px;">${data.status.toUpperCase()}</small>
+                        </div>
+                    </div>`;
+                list.innerHTML += html;
+            });
+        });
+}
+
+function openReceipt(data) {
+    document.getElementById('receipt-modal').style.display = 'flex';
+    document.getElementById('r-type').innerText = data.type.toUpperCase();
+    document.getElementById('r-amount').innerText = `৳ ${data.amount.toFixed(2)}`;
+    document.getElementById('r-status').innerText = data.status.toUpperCase();
+    
+    // রিজেক্ট কারণ শো করা
+    const reasonBox = document.getElementById('reject-reason-box');
+    if(data.status === 'rejected' && data.reason) {
+        reasonBox.style.display = 'block';
+        document.getElementById('r-reason').innerText = data.reason;
+    } else {
+        reasonBox.style.display = 'none';
+    }
+}
+
+function closeReceipt() { document.getElementById('receipt-modal').style.display = 'none'; }
+                        
